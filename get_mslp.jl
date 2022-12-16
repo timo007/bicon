@@ -83,7 +83,7 @@ function contour_data(mslp_grd, mslp_header::ContourHeader, cint, tol)
             Dates.format(unix2datetime(mslp_header.base_time), "yyyymmddHH"),
             mslp_header.lead_time
         ),
-        zval = nothing,
+        zval = NaN32,
     )
 end
 

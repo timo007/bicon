@@ -20,7 +20,12 @@ struct ContourHeader
 end
 
 
-function contour_to_bin(contour, header::ContourHeader, outfile; zval = 1)
+function contour_to_bin(
+    contour::Vector{GMTdataset{Float64,2}},
+    header::ContourHeader,
+    outfile::String;
+    zval::Float32 = 1,
+)
     #
     # Write the contours in binary, network endianess.
     #
@@ -37,7 +42,7 @@ function contour_to_bin(contour, header::ContourHeader, outfile; zval = 1)
         write(file, hton(header.north))
 
         for segment in contour
-            if zval == nothing
+            if isnan(zval)
                 clev = segment.data[1, 3]
             else
                 clev = zval
@@ -60,7 +65,7 @@ function contour_to_bin(contour, header::ContourHeader, outfile; zval = 1)
     end
 end
 
-function bin_to_contour(infile)
+function bin_to_contour(infile::String)
     open(infile, "r") do file
         var = Array{UInt8}(undef, 1, 3)
         data = Array{Float32}(undef, 1, 6)

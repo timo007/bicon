@@ -32,7 +32,7 @@ function opendap_to_gmt(
     east::Float32 = 360.0,
     level::Float32 = NaN32,
     fcst::Float32 = 0,
-)::GMTgrid
+)
     ds = NCDataset(url, "r")
 
     lon = ds["lon"][:]
