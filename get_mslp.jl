@@ -12,13 +12,21 @@ using ArgParse
 
 export get_data, contour_data
 
-function get_data(dtstr, fcst)
+function get_data(
+    dtstr::String,
+    fcst::Float32,
+    region::Tuple{Float32,Float32,Float32,Float32},
+)
+    """
+    Collect GFS MSLP data from NCEP NOMADS server.
 
-    west::Float32 = 140
-    east::Float32 = 200
-    south::Float32 = -55
-    north::Float32 = -25
+    Arguments:
+    	dtstr:		Date and time string (YYYYMMDDHH)
+    	fcst:			Forecast lead time (hours)
+    	region:		Region tuple (west, east, south, north)
 
+    Returns:			GMTgrid with MSLP and data header struct.
+    """
     nwp_time = DateTime(dtstr, dateformat"yyyymmddHH")
     datedir = "gfs." * dtstr[1:8]
     hourdir = dtstr[9:10]
@@ -31,10 +39,10 @@ function get_data(dtstr, fcst)
         datetime2unix(nwp_time),
         fcst,
         NaN32,
-        west,
-        east,
-        south,
-        north,
+        region[1],
+        region[2],
+        region[3],
+        region[4],
     )
 
     infile = string(
@@ -51,25 +59,35 @@ function get_data(dtstr, fcst)
     mslpgrd = opendap_to_gmt(
         infile,
         "prmslmsl",
-        south = south,
-        north = north,
-        west = west,
-        east = east,
-        fcst = convert(Float32, fcst),
+        south = region[3],
+        north = region[4],
+        west = region[1],
+        east = region[2],
+        fcst = fcst,
     )
 
-    #
-    # Write the raw data to file.
-    #
-    dtstr = @sprintf("%s_%03d", Dates.format(nwp_time, "yyyymmddHH"), fcst)
-    raw_grd = grdedit(mslpgrd, coltype = "g")
-    gmtwrite("mslpraw_" * dtstr * ".nc", grdedit(mslpgrd, coltype = "g") / 100)
-
     return mslpgrd, mslp_header
-
 end
 
-function contour_data(mslp_grd, mslp_header::ContourHeader, cint, tol)
+function contour_data(
+    mslp_grd::GMTgrid,
+    mslp_header::ContourHeader,
+    cint::Float32,
+    tol::Float32,
+)
+    """
+    Contour a MSLP field, then simplify the contours and write the simplified
+    contours to a compressed binary file.
+
+    Arguments:
+    	mslp_grd:		GMT grid containting MSLP
+    	mslp_header:	MSLP header information
+    	cint:				Contour interval (hPa)
+    	tol:				Contour tolerance (degrees)
+
+    Returns: Nothing (data is written to file)
+    """
+
     grdcontour(mslp_grd, cont = cint, dump = "mslpcnt.gmt")
     mslpcnt = gmtread("mslpcnt.gmt", table = true)
     smslp = gmtsimplify(mslpcnt, tol = tol)

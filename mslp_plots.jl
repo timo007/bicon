@@ -76,7 +76,11 @@ function main()
     #
     # Get the raw MSLP data from NCEP.
     #
-    raw_grid, mslp_header = get_data(parsed_args["t"], parsed_args["f"])
+    raw_grid, mslp_header = get_data(
+        parsed_args["t"],
+        parsed_args["f"],
+        (Float32(140), Float32(200), Float32(-55), Float32(-25)),
+    )
     raw_grid = raw_grid / 100# Convert Pa to hPa.
 
     #
