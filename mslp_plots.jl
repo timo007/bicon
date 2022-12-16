@@ -1,5 +1,4 @@
 include("BinaryContour.jl")
-include("get_mslp.jl")
 include("GetGFS.jl")
 
 using ArgParse
@@ -73,6 +72,7 @@ function contour_data(
     mslp_header::ContourHeader,
     cint::Float32,
     tol::Float32,
+    outfile::String,
 )
     """
     Contour a MSLP field, then simplify the contours and write the simplified
@@ -83,6 +83,7 @@ function contour_data(
     	mslp_header:	MSLP header information
     	cint:				Contour interval (hPa)
     	tol:				Contour tolerance (degrees)
+  outfile:			Name of binary data file to write.
 
     Returns: Nothing (data is written to file)
     """
@@ -90,18 +91,7 @@ function contour_data(
     grdcontour(mslp_grd, cont = cint, dump = "mslpcnt.gmt")
     mslpcnt = gmtread("mslpcnt.gmt", table = true)
     smslp = gmtsimplify(mslpcnt, tol = tol)
-    contour_to_bin(
-        smslp,
-        mslp_header,
-        @sprintf(
-            "mslp_t%03dc%03d_%s_%03d.bin",
-            tol * 100,
-            cint * 100,
-            Dates.format(unix2datetime(mslp_header.base_time), "yyyymmddHH"),
-            mslp_header.lead_time
-        ),
-        zval = NaN32,
-    )
+    contour_to_bin(smslp, mslp_header, outfile, zval = NaN32)
 end
 
 function contours_to_grid(contours, inc, region)
@@ -181,7 +171,14 @@ function main()
     #
     # Contour the data, and save to file.
     #
-    contour_data(raw_grid, mslp_header, parsed_args["cnt"], parsed_args["tol"])
+    outfile = @sprintf(
+        "mslp_t%03dc%03d_%s_%03d.bin",
+        parsed_args["tol"] * 100,
+        parsed_args["cnt"] * 100,
+        parsed_args["t"],
+        mslp_header.lead_time
+    )
+    contour_data(raw_grid, mslp_header, parsed_args["cnt"], parsed_args["tol"], outfile)
 
     #
     # Read the contours from file.
@@ -205,7 +202,6 @@ function main()
         (mslp_header.west, mslp_header.east, mslp_header.south, mslp_header.north),
     )
     raw_grid = grdedit(raw_grid, coltype = "g")
-    #gmtwrite(mslp_contour, mslp1_grid)
 
     #
     # Make the plot.
