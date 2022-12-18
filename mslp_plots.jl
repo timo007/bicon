@@ -226,17 +226,9 @@ function main()
     contour_data(raw_grid, mslp_header, parsed_args["cnt"], parsed_args["tol"], outfile)
 
     #
-    # Read the contours from file.
+    # Read the contours straight back from the file.
     #
-    contour_file = @sprintf(
-        "mslp_t%03dc%03d_%s_%03d.bin",
-        parsed_args["tol"] * 100,
-        parsed_args["cnt"] * 100,
-        parsed_args["t"],
-        parsed_args["f"]
-    )
-
-    mslp, mslp_header = bin_to_contour(contour_file)
+    mslp, mslp_header = bin_to_contour(outfile)
 
     #
     # Grid the MSLP.
