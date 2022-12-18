@@ -10,6 +10,41 @@ using GMT
 using Printf
 using Statistics
 
+function map_params(region_name::Symbol)
+    """
+    Convert a region name (e.g. NZ) to GMT map projection parameters.
+    """
+    proj = Dict(
+        :NZ => Dict(
+            :proj =>
+                (name = :lambertConic, center = [170, -40], parallels = [-35, -45]),
+            :mapRegion => "142/-52/-170/-28+r",
+            :dataRegion => (140.0f0, 200.0f0, -55.0f0, -25.0f0),
+        ),
+        :SWP => Dict(
+            :proj => (name = :Mercator, center = [175, 0]),
+            :mapRegion => "155/220/-35/-5",
+            :dataRegion => (155.0f0, 220.0f0, -35.0f0, -5.0f0),
+        ),
+        :UK => Dict(
+            :proj => (name = :conicEquidistant, center = [0, 50], parallels = [45, 55]),
+            :mapRegion => "-30/40/15/65+r",
+            :dataRegion => (0f0, 360f0, 40f0, 70f0),
+        ),
+        :Russia => Dict(
+            :proj => (name = :conicEquidistant, center = [100, 65], parallels = [60, 70]),
+            :mapRegion => "50/0/190/50+r",
+            :dataRegion => (0.0f0, 200.0f0, 0.0f0, 90.0f0),
+        ),
+        :World => Dict(
+            :proj => (name = :Robinson, center = 175),
+            :mapRegion => "0/360/-90/90",
+            :dataRegion => (0.0f0, 360.0f0, -90.0f0, 90.0f0),
+        ),
+    )
+    return proj[region_name]
+end
+
 function get_data(
     dtstr::String,
     fcst::Float32,
@@ -101,19 +136,23 @@ function contours_to_grid(contours, inc, region)
     return grid
 end
 
-function make_plot(mslp_grid, header::ContourHeader, titlestr, cpt)
+function make_plot(mslp_grid, header::ContourHeader, region, titlestr, cpt)
     #
     # Plot the data on a map.
     #
     grdimage(
         mslp_grid,
         color = cpt,
-        proj = (name = :lambertConic, center = [170, -40], parallels = [-35, -45]),
-        R = "142/-52/-170/-28+r",
+        proj = map_params(region)[:proj],
+        region = map_params(region)[:mapRegion],
         frame = (axes = :wsen, ticks = 360, grid = 360, title = titlestr),
-        par = (FONT_TITLE = "10,AvantGarde-Book,black", MAP_TITLE_OFFSET = "-9p"),
+        par = (
+            FONT_TITLE = "10,AvantGarde-Book,black",
+            MAP_TITLE_OFFSET = "-9p",
+            MAP_FRAME_TYPE = "plain",
+        ),
     )
-    coast!(shore = "thinnest,black", land = :darkgreen)
+    coast!(area = (0, 0, 1), res=:low, shore = "thinnest,white")
     grdcontour!(
         mslp_grid,
         annot = (int = 4, labels = (font = (6, "AvantGarde-Book"),)),
@@ -144,6 +183,9 @@ function parse_commandline()
         "--inc"
         help = "MSLP grid spacing"
         default = "15m/15m"
+        "--reg"
+        help = "Region to plot"
+        default = :NZ
         "-o"
         help = "Name of map file to produce"
         default = "mslp.png"
@@ -157,6 +199,7 @@ function main()
     # Read the command line.
     #
     parsed_args = parse_commandline()
+	 reg = Symbol(parsed_args["reg"])
 
     #
     # Get the raw MSLP data from NCEP.
@@ -164,15 +207,17 @@ function main()
     raw_grid, mslp_header = get_data(
         parsed_args["t"],
         parsed_args["f"],
-        (Float32(140), Float32(200), Float32(-55), Float32(-25)),
+        map_params(reg)[:dataRegion],
     )
-    raw_grid = raw_grid / 100# Convert Pa to hPa.
+    raw_grid = raw_grid / 100	# Convert Pa to hPa.
+	 #gmtwrite("raw.nc", raw_grid)
 
     #
     # Contour the data, and save to file.
     #
     outfile = @sprintf(
-        "mslp_t%03dc%03d_%s_%03d.bin",
+        "mslp_%s_t%03dc%03d_%s_%03d.bin",
+		  parsed_args["reg"],
         parsed_args["tol"] * 100,
         parsed_args["cnt"] * 100,
         parsed_args["t"],
@@ -206,27 +251,51 @@ function main()
     #
     # Make the plot.
     #
-    mslp_cpt =
-        makecpt(cmap = :roma, range = (980, 1030, 10), inverse = true, continuous = true)
+    valid_time = Dates.format(
+        DateTime(parsed_args["t"], dateformat"yyyymmddHH") + Dates.Hour(parsed_args["f"]),
+        "HH:MMZ e d u YYYY",
+    )
+	 mslp_cpt = grd2cpt(raw_grid, cmap = :batlow, bg=:i,
+							  continuous=true, nlevels=true)
 
     subplot(
         grid = "2x1",
-        dims = (panels = (12, 8),),
-        margins = 0.15,
+        panels_size = 12,
+        region = map_params(reg)[:mapRegion],
+        proj = (map_params(reg)[:proj]),
         savefig = parsed_args["o"],
+        margin = -0.4,
+        title = @sprintf(
+            "MSLP +%dh forecast valid at %s",
+            round(parsed_args["f"]),
+            valid_time
+        ),
+        par = (FONT_HEADING = "12,AvantGarde-Demi,black",),
     )
     subplot(:set, panel = (1, 1))
     raw_title = @sprintf(
         "\"Gridded data as 32-bit floats: %s bytes\"",
         replace(format(length(raw_grid) * sizeof(Float32), commas = true), "," => " ")
     )
-    make_plot(raw_grid, mslp_header::ContourHeader, raw_title, mslp_cpt)
+    make_plot(
+        raw_grid,
+        mslp_header::ContourHeader,
+        reg,
+        raw_title,
+        mslp_cpt,
+    )
     subplot(:set, panel = "next")
     cnt_title = @sprintf(
         "\"Contoured data: %s bytes\"",
         replace(format(filesize(contour_file), commas = true), "," => " ")
     )
-    make_plot(mslp_grid, mslp_header::ContourHeader, cnt_title, mslp_cpt)
+    make_plot(
+        mslp_grid,
+        mslp_header::ContourHeader,
+        reg,
+        cnt_title,
+        mslp_cpt,
+    )
     subplot(:show)
 
     #
