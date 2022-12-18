@@ -279,7 +279,7 @@ function main()
     subplot(:set, panel = "next")
     cnt_title = @sprintf(
         "\"Contoured data: %s bytes\"",
-        replace(format(filesize(contour_file), commas = true), "," => " ")
+        replace(format(filesize(outfile), commas = true), "," => " ")
     )
     make_plot(
         mslp_grid,
