@@ -23,8 +23,8 @@ function map_params(region_name::Symbol)
         ),
         :SWP => Dict(
             :proj => (name = :Mercator, center = [175, 0]),
-            :mapRegion => "155/220/-35/-5",
-            :dataRegion => (155.0f0, 220.0f0, -35.0f0, -5.0f0),
+            :mapRegion => "150/240/-35/0",
+            :dataRegion => (150.0f0, 240.0f0, -35.0f0, 0.0f0),
         ),
         :UK => Dict(
             :proj => (name = :conicEquidistant, center = [0, 50], parallels = [45, 55]),
@@ -67,8 +67,8 @@ function get_data(
     println(@sprintf("Collecting +%03d hour forecast MSLP data", fcst))
     mslp_header = ContourHeader(
         UInt8(0),
-        UInt8(0),
-        UInt8(4),
+        UInt8(3),
+        UInt8(1),
         datetime2unix(nwp_time),
         fcst,
         NaN32,
