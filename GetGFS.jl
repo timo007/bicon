@@ -37,8 +37,9 @@ function download_var(
 	 #
 	 for t = 1:length(valtime)
 		 base_time = Dates.format(valtime[1], "yyyymmddHH")
-		 lead_time = Dates.value(valtime[t] - valtime[1])/3600000
-		 outfile=@sprintf("gfs_%s_%s_%03d.nc", var, base_time, lead_time)
+		 lead_time = Dates.value(valtime[t] - valtime[1])/3600000 # ms to hours.
+		 GRIBparam = NCEPvar_to_GRIBparam(var)
+		 outfile=@sprintf("gfs_%03d-%03d-%03d_%s_%03d.nc", var, base_time, lead_time)
 
         data_grid = mat2grid(
 			   permutedims(nomissing(data[:, :, t], NaN), (2, 1),),
@@ -51,24 +52,24 @@ function download_var(
 end
 
 
+"""
+Read a variable from the NCEP OpenDAP server (nomads.ncep.noaa.gov)
+and convert it to a GMT grid type. This defaults to reading global data.
+If no level is specified as an argument, read a 2D field, otherwise read
+a 3D field at the level specified by the level argument.
+
+Arguments:
+
+url:		The OpenDAP URL
+var:		The variable to read (e.g. ugrdprs)
+south: 	The southern limit of the domain to read.
+north:	The northern limit of the domain to read.
+west:		The western limit of the domain to read.
+east:		The eastern limit of the domain to read.
+level:	The vertical level to read (e.g. 925 for 925 hPa). If ommitted, read a 2D field.
+fcst:		The forecast lead time (in units of time since the the first/base time. e.g. 24)
+"""
 function opendap_to_gmt(
-	"""
-	Read a variable from the NCEP OpenDAP server (nomads.ncep.noaa.gov)
-	and convert it to a GMT grid type. This defaults to reading global data.
-	If no level is specified as an argument, read a 2D field, otherwise read
-	a 3D field at the level specified by the level argument.
-
-	Arguments:
-
-	url:		The OpenDAP URL
-	var:		The variable to read (e.g. ugrdprs)
-	south: 	The southern limit of the domain to read.
-	north:	The northern limit of the domain to read.
-	west:		The western limit of the domain to read.
-	east:		The eastern limit of the domain to read.
-	level:	The vertical level to read (e.g. 925 for 925 hPa). If ommitted, read a 2D field.
-	fcst:		The forecast lead time (in units of time since the the first/base time. e.g. 24)
-	"""
     url::String,
     var::String;
     south::Float32 = -90.0,

@@ -110,8 +110,8 @@ end
 
 function GRIBparam(discipline::Integer, category::Integer, parameter::Integer)
 	"""
-	Read the parameter description (name) and units from the WMO GRIB-2 paramete
-	file.
+	Read the parameter description (name) and units from the WMO GRIB-2 parameter
+	file (downloaded from WMO in CSV format).
 
 	Arguments:
 		discipline:	Discipline - GRIB octet ...
@@ -131,6 +131,24 @@ function GRIBparam(discipline::Integer, category::Integer, parameter::Integer)
 		end
 	end
 	return name, unit
+end
+
+function NCEPvar_to_GRIBparam(ncep_var::String,)
+		""""
+		Convert NCEP parameter names to a tuple: (discipline, category, parameter)
+		as used in GRIB-2. This table needs serious work to be a bit more complete.
+		"""
+		ncep_table = Dict(
+				"prmslmsl" => (0, 3, 1),
+		)
+
+		if haskey(ncep_table, ncep_var)
+			GRIB_var = ncep_table[ncep_var]
+		else
+			GRIB_var = (255, 255, 255)
+		end
+
+		return GRIB_var
 end
 
 end
