@@ -1,10 +1,11 @@
 module BinaryContour
 
+using CSV
 using GMT
 using Dates
 using Printf
 
-export contour_to_bin, bin_to_contour, ContourHeader
+export contour_to_bin, bin_to_contour, ContourHeader, GRIBparam
 
 struct ContourHeader
     discipline::UInt8
@@ -105,6 +106,31 @@ function bin_to_contour(infile::String)
         end
         return gmtds, header
     end
+end
+
+function GRIBparam(discipline::Integer, category::Integer, parameter::Integer)
+	"""
+	Read the parameter description (name) and units from the WMO GRIB-2 paramete
+	file.
+
+	Arguments:
+		discipline:	Discipline - GRIB octet ...
+		category:   Category - GRIB octet ...
+		parameter:  Parameter - GRIB octet ..."
+
+	Returns:
+	"""
+	name = "Unknown"
+	unit = "Unknown"
+	param = @sprintf("%d-%d-%d", discipline, category, parameter)
+	data = CSV.File("4.2.csv")
+	for row in data
+		if row[8] == param
+			name = match(r"\'(.*)\'", row[10])[1]
+			unit = match(r"unit\/(.*)>", row[2])[1]
+		end
+	end
+	return name, unit
 end
 
 end
