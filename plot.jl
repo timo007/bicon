@@ -1,14 +1,12 @@
 include("BinaryContour.jl")
-include("GetGFS.jl")
 
 using ArgParse
 using .BinaryContour
 using Dates
-using .GetGFS
+using Downloads
 using Format
 using GMT
 using Printf
-using Statistics
 
 function map_params(region_name::Symbol)
     """
@@ -48,15 +46,6 @@ function map_params(region_name::Symbol)
         ),
     )
     return proj[region_name]
-end
-
-function get_data(
-    dataURL::String,
-)
-    """
-    Returns:			GMTgrid with MSLP and data header struct.
-    """
-#    return mslpgrd, mslp_header
 end
 
 function contours_to_grid(contours, inc, region)
@@ -115,8 +104,9 @@ function parse_commandline()
     s = ArgParseSettings()
     @add_arg_table! s begin
         "-i"
-        help = "URL to the data file"
-        default = "mslp_NZ_t025c200_2022121800_000.bin"
+		  arg_type = AbstractString
+        help = "Name or URL of the data file"
+        default = "http://nomuka.com/data/mslp_NZ_t025c200_2022121818_000.bin"
         "-f"
         "--inc"
         help = "MSLP grid spacing"
@@ -139,10 +129,21 @@ function main()
     parsed_args = parse_commandline()
 	 reg = Symbol(parsed_args["reg"])
 
+	 #
+	 # Download (if required) the data file.
+	 #
+	 if isfile(parsed_args["i"])
+		 infile = parsed_args["i"]
+	 else
+		 Downloads.download(parsed_args["i"], "./data.bin")
+		 println(@sprintf("Downloaded %s: %d bytes", parsed_args["i"], filesize("./data.bin")))
+		 infile = "./data.bin"
+	 end
+
     #
     # Read the contours from the file.
     #
-	 mslp, mslp_header = bin_to_contour(parsed_args["i"])
+	 mslp, mslp_header = bin_to_contour(infile)
 
     #
     # Grid the MSLP.
