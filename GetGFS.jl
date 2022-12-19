@@ -1,5 +1,8 @@
 module GetGFS
 
+include("BinaryContour.jl")
+
+using .BinaryContour
 using NCDatasets
 using Dates
 using GMT
@@ -39,7 +42,7 @@ function download_var(
 		 base_time = Dates.format(valtime[1], "yyyymmddHH")
 		 lead_time = Dates.value(valtime[t] - valtime[1])/3600000 # ms to hours.
 		 GRIBparam = NCEPvar_to_GRIBparam(var)
-		 outfile=@sprintf("gfs_%03d-%03d-%03d_%s_%03d.nc", var, base_time, lead_time)
+		 outfile=@sprintf("gfs_%03d-%03d-%03d_%s_%03d.nc", GRIBparam[1], GRIBparam[2], GRIBparam[3], base_time, lead_time)
 
         data_grid = mat2grid(
 			   permutedims(nomissing(data[:, :, t], NaN), (2, 1),),

@@ -5,7 +5,7 @@ using GMT
 using Dates
 using Printf
 
-export contour_to_bin, bin_to_contour, ContourHeader, GRIBparam
+export contour_to_bin, bin_to_contour, ContourHeader, GRIBparam, NCEPvar_to_GRIBparam
 
 struct ContourHeader
     discipline::UInt8
