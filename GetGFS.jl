@@ -47,7 +47,7 @@ function download_var(url::String, var::String, level::Float32 = NaN32)
             GRIBparam[1],
             GRIBparam[2],
             GRIBparam[3],
-            levstr,
+				GRIBparam[4],
             base_time,
             lead_time
         )
@@ -141,8 +141,8 @@ function parse_commandline()
         default = "prmslmsl"
         "-p"
         help = "Vertical level (when required)"
-        arg_type = Float32
-        default = NaN32
+		  arg_type = String
+		  default = repeat(' ', 8)
         "-s"
         help = "Scale factor (when required)"
         arg_type = Float32
@@ -190,7 +190,7 @@ function main()
         # file name.
         cntfile = replace(file, ".nc" => ".bin")
         GRIBparam = NCEPvar_to_GRIBparam(parsed_args["v"])
-        fcst = match(r"^gfs_\d{3}-\d{3}-\d{3}_.{9}_\d{10}_(\d{3}).nc", file)[1]
+        fcst = match(r"^.*_(\d{3}).nc", file)[1]
 
         grid = gmtread(file, grid = true, region = map_params(reg)[:dataRegion])
         header = ContourHeader(
@@ -199,7 +199,7 @@ function main()
             GRIBparam[3],
             datetime2unix(DateTime(parsed_args["t"], dateformat"yyyymmddHH")),
             parse(Float32, fcst),
-            parsed_args["p"],
+				lpad(GRIBparam[4], 8, ' '),
             map_params(reg)[:dataRegion][1],
             map_params(reg)[:dataRegion][2],
             map_params(reg)[:dataRegion][3],

@@ -9,7 +9,7 @@ using GMT
 using Printf
 
 
-function make_plot(mslp_grid, header::ContourHeader, region, contint, outfile)
+function make_plot(mslp_grid, header::ContourHeader, region, contint, cpt, outfile)
     valid_time = Dates.format(
         unix2datetime(header.base_time) + Dates.Hour(header.lead_time),
         "HH:MMZ e d u YYYY",
@@ -22,7 +22,7 @@ function make_plot(mslp_grid, header::ContourHeader, region, contint, outfile)
     var, unit = GRIBparam(header.discipline, header.category, header.parameter)
     title = @sprintf("\"%s\\072 %s valid at %s\"", var, fcst_type, valid_time)
 
-    cpt = grd2cpt(mslp_grid, cmap = :batlow, bg = :i, continuous = true, nlevels = true)
+    cpt = grd2cpt(mslp_grid, cmap = cpt, bg = :i, continuous = true, nlevels = true)
 
     #
     # Plot the data on a map.
@@ -64,6 +64,9 @@ function parse_commandline()
 		  help = "Contour spacing"
 		  arg_type = Float32
 		  default = Float32(2)
+        "--cpt"
+		  help = "Colour palette"
+		  default = "batlow"
         "--inc"
         help = "MSLP grid spacing"
         default = "15m/15m"
@@ -115,7 +118,8 @@ function main()
     #
     # Make the plot.
     #
-	 make_plot(mslp_grid, mslp_header::ContourHeader, reg, parsed_args["cnt"], parsed_args["o"])
+	 make_plot(mslp_grid, mslp_header::ContourHeader, reg, parsed_args["cnt"],
+				  parsed_args["cpt"], parsed_args["o"])
 
 end
 

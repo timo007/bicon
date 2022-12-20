@@ -15,7 +15,7 @@ struct ContourHeader
     parameter::UInt8
     base_time::Float64
     lead_time::Float32
-    prs::Float32
+	 prs::String
     west::Float32
     east::Float32
     south::Float32
@@ -41,7 +41,7 @@ function contour_to_bin(
         write(file, hton(header.parameter))
         write(file, hton(header.base_time))
         write(file, hton(header.lead_time))
-        write(file, hton(header.prs))
+        write(file, header.prs)
         write(file, hton(header.west))
         write(file, hton(header.east))
         write(file, hton(header.south))
@@ -73,23 +73,26 @@ end
 
 function bin_to_contour(infile::String)
     open(infile, "r") do file
-        var = Array{UInt8}(undef, 1, 3)
-        data = Array{Float32}(undef, 1, 6)
+        var = Vector{UInt8}(undef, 3)
+        prs = Vector{UInt8}(undef, 8)
+        region = Vector{Float32}(undef, 4)
         read!(file, var)
         bt = ntoh(read(file, Float64))
-        read!(file, data)
-        data = ntoh.(data)
+        lt = ntoh(read(file, Float32))
+		  read!(file, prs)
+        read!(file, region)
+        region = ntoh.(region)
         header = ContourHeader(
             var[1],
             var[2],
             var[3],
             bt,
-            data[1],
-            data[2],
-            data[3],
-            data[4],
-            data[5],
-            data[6],
+				lt,
+				String(prs),
+            region[1],
+            region[2],
+            region[3],
+            region[4],
         )
 
         gmtds = Vector{GMTdataset{Float32,2}}(undef, 0)
@@ -156,7 +159,7 @@ function NCEPvar_to_GRIBparam(ncep_var::String)
     if haskey(ncep_table, ncep_var)
         GRIB_var = ncep_table[ncep_var]
     else
-        GRIB_var = (255, 255, 255)
+		 GRIB_var = (255, 255, 255, repeat(' ', 8))
     end
 
     return GRIB_var
