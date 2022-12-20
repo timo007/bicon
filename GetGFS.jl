@@ -18,18 +18,17 @@ function download_var(url::String, var::String, level::Float32 = NaN32)
 
     lon = ds["lon"][:]
     lat = ds["lat"][:]
-    valtime = ds["time"][1:41]
+	 basetime = ds["time"][1]
+    valtime = ds["time"][2:41]
 
     if (!isnan(level))
         # Extract a slice of 3D data (e.g. a level from pressure level data)
         lev = ds["lev"][:]
         lev_idx = findall(x -> x ≈ level, lev)[1]
-        data = ds[var][:, :, lev_idx, 1:41]
-        levstr = replace(@sprintf("%09.3f", level), "." => "p")
+        data = ds[var][:, :, lev_idx, 2:41]
     else
         # 2D data (e.g. surface fields)
-        data = ds[var][:, :, 1:41]
-        levstr = "2dsurface"
+        data = ds[var][:, :, 2:41]
     end
 
     close(ds)
@@ -40,14 +39,14 @@ function download_var(url::String, var::String, level::Float32 = NaN32)
     file_list = String[]
     for t = 1:length(valtime)
         base_time = Dates.format(valtime[1], "yyyymmddHH")
-        lead_time = Dates.value(valtime[t] - valtime[1]) / 3600000 # ms to hours.
+        lead_time = Dates.value(valtime[t] - basetime) / 3600000 # ms to hours.
         GRIBparam = NCEPvar_to_GRIBparam(var)
         outfile = @sprintf(
             "GFS_%03d-%03d-%03d_%s_%s_%03d.nc",
             GRIBparam[1],
             GRIBparam[2],
             GRIBparam[3],
-				GRIBparam[4],
+				strip(GRIBparam[4], ' '),
             base_time,
             lead_time
         )
@@ -153,8 +152,7 @@ function parse_commandline()
         default = Float32(0.25)
         "--cnt"
         help = "Contour interval"
-        arg_type = Float32
-        default = Float32(2)
+        default = 2
         "--reg"
         help = "Region to plot"
         default = :NZ

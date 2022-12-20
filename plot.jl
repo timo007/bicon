@@ -20,9 +20,11 @@ function make_plot(mslp_grid, header::ContourHeader, region, contint, cpt, outfi
         fcst_type = @sprintf("%dh forecast", header.lead_time)
     end
     var, unit = GRIBparam(header.discipline, header.category, header.parameter)
-	 title = @sprintf("\"%s %s\\072 %s valid at %s\"", strip(header.prs, ' '), var, fcst_type, valid_time)
+	 title = @sprintf("\"%s %s (%s)\\072 %s valid at %s\"", strip(header.prs, ' '), var, unit, fcst_type, valid_time)
 
-    cpt = grd2cpt(mslp_grid, cmap = cpt, bg = :i, continuous = true, nlevels = true)
+    if !isfile(cpt)
+		 cpt = grd2cpt(mslp_grid, cmap = cpt, bg = :i, continuous = true, nlevels = true)
+	 end
 
     #
     # Plot the data on a map.
@@ -41,10 +43,10 @@ function make_plot(mslp_grid, header::ContourHeader, region, contint, cpt, outfi
         ),
         figsize = 20,
     )
-    coast!(area = (0, 0, 1), shore = "thinnest,white")
+    coast!(area = (0, 0, 1), shore = "thinnest,brown")
     grdcontour!(
         mslp_grid,
-        annot = (int = contint*2, labels = (font = (8, "AvantGarde-Book"),)),
+        annot = (int = 4, labels = (font = (8, "AvantGarde-Book"),)),
         cont = contint,
         pen = "thin, black",
         labels = (dist = 4,),
@@ -62,8 +64,7 @@ function parse_commandline()
         default = "http://nomuka.com/data/mslp_NZ_t025c200_2022121818_000.bin"
         "--cnt"
 		  help = "Contour spacing"
-		  arg_type = Float32
-		  default = Float32(2)
+		  default = 2
         "--cpt"
 		  help = "Colour palette"
 		  default = "batlow"

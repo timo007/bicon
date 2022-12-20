@@ -153,13 +153,15 @@ function NCEPvar_to_GRIBparam(ncep_var::String)
 		 "tmin2m"   => (0, 0, 5, "2m"),
 		 "tmpsfc"   => (0, 0, 0, "Surface"),
 		 "tmp2m"    => (0, 0, 0, "2m"),
+		 "apcpsfc"  => (0, 1, 8, "Surface"),
+		 "gustsfc"	=> (0, 2, 22, "Surface"),
 		 "prmslmsl" => (0, 3, 1, "MSL"),
 	 )
 
     if haskey(ncep_table, ncep_var)
         GRIB_var = ncep_table[ncep_var]
     else
-		 GRIB_var = (255, 255, 255, repeat(' ', 8))
+		 GRIB_var = (255, 255, 255, "Unknown")
     end
 
     return GRIB_var
@@ -168,7 +170,7 @@ end
 function grid_to_contour(
     grid::GMTgrid,
     header::ContourHeader,
-    cint::Float32,
+    cint,
     tol::Float32,
     cntfile::String,
 )
@@ -215,6 +217,12 @@ function map_params(region_name::Symbol)
             :proj => (name = :Mercator, center = [175, 0]),
             :mapRegion => "150/240/-35/0",
         		:frame => (axes = :WSen, ticks = 2, grid = 10, annot = 10),
+        ),
+        :Tonga => Dict(
+            :dataRegion => (175.0f0, 195.0f0, -30.0f0, -10.0f0),
+            :proj => (name = :Mercator, center = [182, 0]),
+            :mapRegion => "175/195/-30/-10",
+        		:frame => (axes = :WSen, ticks = 1, grid = 5, annot = 5),
         ),
         :UK => Dict(
             :dataRegion => (0f0, 360f0, 40f0, 70f0),
