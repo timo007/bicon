@@ -43,7 +43,7 @@ function download_var(url::String, var::String, level::Float32 = NaN32)
         lead_time = Dates.value(valtime[t] - valtime[1]) / 3600000 # ms to hours.
         GRIBparam = NCEPvar_to_GRIBparam(var)
         outfile = @sprintf(
-            "gfs_%03d-%03d-%03d_%s_%s_%03d.nc",
+            "GFS_%03d-%03d-%03d_%s_%s_%03d.nc",
             GRIBparam[1],
             GRIBparam[2],
             GRIBparam[3],
@@ -188,7 +188,7 @@ function main()
     for file in file_list
         # Try and extract variable, base time and lead time from the 
         # file name.
-        cntfile = replace(file, ".nc" => ".bin")
+		  cntfile = replace(file, "GFS" => "GFS_" * parsed_args["reg"], ".nc" => ".bin")
         GRIBparam = NCEPvar_to_GRIBparam(parsed_args["v"])
         fcst = match(r"^.*_(\d{3}).nc", file)[1]
 

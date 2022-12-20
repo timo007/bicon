@@ -151,9 +151,9 @@ function NCEPvar_to_GRIBparam(ncep_var::String)
     ncep_table = Dict(
 		 "tmax2m"   => (0, 0, 4, "2m"),
 		 "tmin2m"   => (0, 0, 5, "2m"),
-		 "tmpsfc"   => (0, 0, 0, "sfc"),
+		 "tmpsfc"   => (0, 0, 0, "Surface"),
 		 "tmp2m"    => (0, 0, 0, "2m"),
-		 "prmslmsl" => (0, 3, 1, "msl"),
+		 "prmslmsl" => (0, 3, 1, "MSL"),
 	 )
 
     if haskey(ncep_table, ncep_var)
