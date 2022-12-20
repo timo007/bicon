@@ -20,7 +20,7 @@ function make_plot(mslp_grid, header::ContourHeader, region, contint, cpt, outfi
         fcst_type = @sprintf("%dh forecast", header.lead_time)
     end
     var, unit = GRIBparam(header.discipline, header.category, header.parameter)
-    title = @sprintf("\"%s\\072 %s valid at %s\"", var, fcst_type, valid_time)
+	 title = @sprintf("\"%s %s\\072 %s valid at %s\"", strip(header.prs, ' '), var, fcst_type, valid_time)
 
     cpt = grd2cpt(mslp_grid, cmap = cpt, bg = :i, continuous = true, nlevels = true)
 
