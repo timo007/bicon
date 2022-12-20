@@ -8,52 +8,6 @@ using Format
 using GMT
 using Printf
 
-function map_params(region_name::Symbol)
-    """
-    Convert a region name (e.g. NZ) to GMT map projection parameters.
-    """
-    proj = Dict(
-        :NZ => Dict(
-            :dataRegion => (140.0f0, 200.0f0, -55.0f0, -25.0f0),
-            :proj =>
-                (name = :lambertConic, center = [170, -40], parallels = [-35, -45]),
-            :mapRegion => "142/-52/-170/-28+r",
-            :frame => (axes = :WSen, ticks = 1, grid = 10, annot = 10),
-        ),
-        :SWP => Dict(
-            :dataRegion => (150.0f0, 240.0f0, -35.0f0, 0.0f0),
-            :proj => (name = :Mercator, center = [175, 0]),
-            :mapRegion => "150/240/-35/0",
-            :frame => (axes = :wsen, ticks = 360, grid = 360),
-        ),
-        :UK => Dict(
-            :dataRegion => (0.0f0, 360.0f0, 40.0f0, 70.0f0),
-            :proj => (name = :conicEquidistant, center = [0, 50], parallels = [45, 55]),
-            :mapRegion => "-30/40/15/65+r",
-            :frame => (axes = :wsen, ticks = 360, grid = 360),
-        ),
-        :Russia => Dict(
-            :dataRegion => (0.0f0, 200.0f0, 0.0f0, 90.0f0),
-            :proj => (name = :conicEquidistant, center = [100, 65], parallels = [60, 70]),
-            :mapRegion => "50/0/190/50+r",
-            :frame => (axes = :wsen, ticks = 360, grid = 360),
-        ),
-        :World => Dict(
-            :dataRegion => (0.0f0, 360.0f0, -90.0f0, 90.0f0),
-            :proj => (name = :Robinson, center = 175),
-            :mapRegion => "0/360/-90/90",
-            :frame => (axes = :wsen, ticks = 360, grid = 360),
-        ),
-    )
-    return proj[region_name]
-end
-
-function contours_to_grid(contours, inc, region)
-    println("Converting contours to grid")
-    mean_contour = blockmean(contours, inc = inc, region = region)
-    grid = surface(mean_contour, inc = inc, region = region, tension = 0, A = "m")
-    return grid
-end
 
 function make_plot(mslp_grid, header::ContourHeader, region, outfile)
     valid_time = Dates.format(
@@ -149,7 +103,7 @@ function main()
     #
     # Grid the MSLP.
     #
-    mslp_grid = contours_to_grid(
+    mslp_grid = contour_to_grid(
         mslp,
         parsed_args["inc"],
         (mslp_header.west, mslp_header.east, mslp_header.south, mslp_header.north),

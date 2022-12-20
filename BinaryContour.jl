@@ -6,7 +6,7 @@ using Dates
 using Printf
 
 export contour_to_bin,
-    bin_to_contour, ContourHeader, GRIBparam, NCEPvar_to_GRIBparam, grid_to_contour
+    bin_to_contour, ContourHeader, GRIBparam, NCEPvar_to_GRIBparam, grid_to_contour, contour_to_grid
 
 struct ContourHeader
     discipline::UInt8
@@ -28,6 +28,9 @@ function contour_to_bin(
     outfile::String;
     zval::Float32 = 1,
 )
+	"""
+	Convert contours (in GMT data sets) to binary encoded contours.
+	"""
     #
     # Write the contours in binary, network endianess.
     #
@@ -114,6 +117,8 @@ function GRIBparam(discipline::Integer, category::Integer, parameter::Integer)
     Read the parameter description (name) and units from the WMO GRIB-2 parameter
     file (downloaded from WMO in CSV format).
 
+	 Data are available here: http://codes.wmo.int/grib2/codeflag/4.2?_format=csv
+
     Arguments:
     	discipline:	Discipline - GRIB octet ...
     	category:   Category - GRIB octet ...
@@ -136,10 +141,16 @@ end
 
 function NCEPvar_to_GRIBparam(ncep_var::String)
     """"
-    Convert NCEP parameter names to a tuple: (discipline, category, parameter)
+    Convert NCEP parameter names to a tuple: (discipline, category, parameter, level)
     as used in GRIB-2. This table needs serious work to be a bit more complete.
     """
-    ncep_table = Dict("prmslmsl" => (0, 3, 1))
+    ncep_table = Dict(
+		 "tmax2m"   => (0, 0, 4, "2m"),
+		 "tmin2m"   => (0, 0, 5, "2m"),
+		 "tmpsfc"   => (0, 0, 0, "sfc"),
+		 "tmp2m"    => (0, 0, 0, "2m"),
+		 "prmslmsl" => (0, 3, 1, "msl"),
+	 )
 
     if haskey(ncep_table, ncep_var)
         GRIB_var = ncep_table[ncep_var]

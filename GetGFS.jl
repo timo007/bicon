@@ -65,23 +65,6 @@ function download_var(url::String, var::String, level::Float32 = NaN32)
 end
 
 
-"""
-Read a variable from the NCEP OpenDAP server (nomads.ncep.noaa.gov)
-and convert it to a GMT grid type. This defaults to reading global data.
-If no level is specified as an argument, read a 2D field, otherwise read
-a 3D field at the level specified by the level argument.
-
-Arguments:
-
-url:		The OpenDAP URL
-var:		The variable to read (e.g. ugrdprs)
-south: 	The southern limit of the domain to read.
-north:	The northern limit of the domain to read.
-west:		The western limit of the domain to read.
-east:		The eastern limit of the domain to read.
-level:	The vertical level to read (e.g. 925 for 925 hPa). If ommitted, read a 2D field.
-fcst:		The forecast lead time (in units of time since the the first/base time. e.g. 24)
-"""
 function opendap_to_gmt(
     url::String,
     var::String;
@@ -92,6 +75,23 @@ function opendap_to_gmt(
     level::Float32 = NaN32,
     fcst::Float32 = 0,
 )
+	"""
+	Read a variable from the NCEP OpenDAP server (nomads.ncep.noaa.gov)
+	and convert it to a GMT grid type. This defaults to reading global data.
+	If no level is specified as an argument, read a 2D field, otherwise read
+	a 3D field at the level specified by the level argument.
+
+	Arguments:
+
+	url:		The OpenDAP URL
+	var:		The variable to read (e.g. ugrdprs)
+	south: 	The southern limit of the domain to read.
+	north:	The northern limit of the domain to read.
+	west:		The western limit of the domain to read.
+	east:		The eastern limit of the domain to read.
+	level:	The vertical level to read (e.g. 925 for 925 hPa). If ommitted, read a 2D field.
+	fcst:		The forecast lead time (in units of time since the the first/base time. e.g. 24)
+	"""
     ds = NCDataset(url, "r")
 
     lon = ds["lon"][:]
@@ -129,41 +129,6 @@ function opendap_to_gmt(
     return data_grid
 end
 
-
-function map_params(region_name::Symbol)
-    """
-    Convert a region name (e.g. NZ) to GMT map projection parameters.
-    """
-    proj = Dict(
-        :NZ => Dict(
-            :proj =>
-                (name = :lambertConic, center = [170, -40], parallels = [-35, -45]),
-            :mapRegion => "142/-52/-170/-28+r",
-            :dataRegion => (140.0f0, 200.0f0, -55.0f0, -25.0f0),
-        ),
-        :SWP => Dict(
-            :proj => (name = :Mercator, center = [175, 0]),
-            :mapRegion => "150/240/-35/0",
-            :dataRegion => (150.0f0, 240.0f0, -35.0f0, 0.0f0),
-        ),
-        :UK => Dict(
-            :proj => (name = :conicEquidistant, center = [0, 50], parallels = [45, 55]),
-            :mapRegion => "-30/40/15/65+r",
-            :dataRegion => (0.0f0, 360.0f0, 40.0f0, 70.0f0),
-        ),
-        :Russia => Dict(
-            :proj => (name = :conicEquidistant, center = [100, 65], parallels = [60, 70]),
-            :mapRegion => "50/0/190/50+r",
-            :dataRegion => (0.0f0, 200.0f0, 0.0f0, 90.0f0),
-        ),
-        :World => Dict(
-            :proj => (name = :Robinson, center = 175),
-            :mapRegion => "0/360/-90/90",
-            :dataRegion => (0.0f0, 360.0f0, -90.0f0, 90.0f0),
-        ),
-    )
-    return proj[region_name]
-end
 
 function parse_commandline()
     s = ArgParseSettings()
