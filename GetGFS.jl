@@ -2,9 +2,11 @@ module GetGFS
 
 include("BinaryContour.jl")
 
+using ArgParse
 using .BinaryContour
 using NCDatasets
 using Dates
+using Format
 using GMT
 using Printf
 
@@ -21,16 +23,18 @@ function download_var(
 
     lon = ds["lon"][:]
     lat = ds["lat"][:]
-    valtime = ds["time"][:]
+    valtime = ds["time"][1:41]
 
     if (!isnan(level))
         # Extract a slice of 3D data (e.g. a level from pressure level data)
         lev = ds["lev"][:]
         lev_idx = findall(x -> x ≈ level, lev)[1]
-		  data = ds[var][:, :, lev_idx, :]
+		  data = ds[var][:, :, lev_idx, 1:41]
+		  levstr = replace(@sprintf("%09.3f", level), "." => "p")
     else
         # 2D data (e.g. surface fields)
-		  data = ds[var][:, :, :]
+		  data = ds[var][:, :, 1:41]
+		  levstr = "2dsurface"
     end
 
     close(ds)
@@ -38,11 +42,13 @@ function download_var(
 	 #
 	 # Convert the data to GMT grids, and save to files.
 	 #
+	 file_list = String[]
 	 for t = 1:length(valtime)
 		 base_time = Dates.format(valtime[1], "yyyymmddHH")
 		 lead_time = Dates.value(valtime[t] - valtime[1])/3600000 # ms to hours.
 		 GRIBparam = NCEPvar_to_GRIBparam(var)
-		 outfile=@sprintf("gfs_%03d-%03d-%03d_%s_%03d.nc", GRIBparam[1], GRIBparam[2], GRIBparam[3], base_time, lead_time)
+		 outfile=@sprintf("gfs_%03d-%03d-%03d_%s_%s_%03d.nc", GRIBparam[1], GRIBparam[2], GRIBparam[3], levstr, base_time, lead_time)
+		 push!(file_list, outfile)
 
         data_grid = mat2grid(
 			   permutedims(nomissing(data[:, :, t], NaN), (2, 1),),
@@ -52,6 +58,7 @@ function download_var(
 		  println("Writing ", outfile)
 		  gmtwrite(outfile, data_grid)
 	  end
+	  return file_list
 end
 
 
@@ -118,5 +125,120 @@ function opendap_to_gmt(
 
     return data_grid
 end
+
+
+function map_params(region_name::Symbol)
+    """
+    Convert a region name (e.g. NZ) to GMT map projection parameters.
+    """
+    proj = Dict(
+        :NZ => Dict(
+            :proj =>
+                (name = :lambertConic, center = [170, -40], parallels = [-35, -45]),
+            :mapRegion => "142/-52/-170/-28+r",
+            :dataRegion => (140.0f0, 200.0f0, -55.0f0, -25.0f0),
+        ),
+        :SWP => Dict(
+            :proj => (name = :Mercator, center = [175, 0]),
+            :mapRegion => "150/240/-35/0",
+            :dataRegion => (150.0f0, 240.0f0, -35.0f0, 0.0f0),
+        ),
+        :UK => Dict(
+            :proj => (name = :conicEquidistant, center = [0, 50], parallels = [45, 55]),
+            :mapRegion => "-30/40/15/65+r",
+            :dataRegion => (0f0, 360f0, 40f0, 70f0),
+        ),
+        :Russia => Dict(
+            :proj => (name = :conicEquidistant, center = [100, 65], parallels = [60, 70]),
+            :mapRegion => "50/0/190/50+r",
+            :dataRegion => (0.0f0, 200.0f0, 0.0f0, 90.0f0),
+        ),
+        :World => Dict(
+            :proj => (name = :Robinson, center = 175),
+            :mapRegion => "0/360/-90/90",
+            :dataRegion => (0.0f0, 360.0f0, -90.0f0, 90.0f0),
+        ),
+    )
+    return proj[region_name]
+end
+
+function parse_commandline()
+    s = ArgParseSettings()
+    @add_arg_table! s begin
+        "-t"
+        help = "NWP base time (yyyymmddHH)"
+        default = "mslp.bin"
+        "-f"
+        "--tol"
+        help = "Tolerance"
+        arg_type = Float32
+        default = convert(Float32, 0.25)
+        "--cnt"
+        help = "Contour interval"
+        arg_type = Float32
+        default = convert(Float32, 2)
+        "--reg"
+        help = "Region to plot"
+        default = :NZ
+        "-o"
+        help = "Name of map file to produce"
+        default = "mslp.png"
+    end
+
+    return parse_args(s)
+end
+
+function main()
+    #
+    # Read the command line.
+    #
+    parsed_args = parse_commandline()
+	 reg = Symbol(parsed_args["reg"])
+
+	 #
+	 # Collect data from NCEP.
+	 #
+	 ncep_url = string(
+        "http://nomads.ncep.noaa.gov:80/dods/gfs_0p25/gfs",
+		  parsed_args["t"][1:8], "/gfs_0p25_", parsed_args["t"][9:10], "z",
+    )
+	 file_list = download_var(ncep_url, "prmslmsl", "./",)
+
+	 #
+	 # Process the files listed on the command line
+	 #
+	 for file in file_list
+		 # Try and extract variable, base time and lead time from the 
+		 # file name.
+		 cntfile = replace(file, ".nc" => ".bin")
+		 parts = match(r"^gfs_(\d{3})-(\d{3})-(\d{3})_(.{9})_(\d{10})_(\d{3}).nc", file)
+		 if parts[4] == "2dsurface"
+			 level = NaN32
+		 else
+			 level = parse(Float32, parts[4])
+		 end
+		 
+		 grid = gmtread(file, grid = true, region = map_params(reg)[:dataRegion])
+		 header = ContourHeader(
+										parse(UInt8, parts[1], base = 10),
+										parse(UInt8, parts[2], base = 10),
+										parse(UInt8, parts[3], base = 10),
+										datetime2unix(DateTime(parts[5], dateformat"yyyymmddHH")),
+										parse(Float32, parts[6]),
+										level,
+										map_params(reg)[:dataRegion][1],
+										map_params(reg)[:dataRegion][2],
+										map_params(reg)[:dataRegion][3],
+										map_params(reg)[:dataRegion][4],
+		)
+		println("Contouring ", file)
+		grid = grid/100
+      grid_to_contour(grid, header, parsed_args["cnt"], parsed_args["tol"], cntfile)
+
+	 end
+
+end
+
+main()
 
 end

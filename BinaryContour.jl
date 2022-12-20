@@ -156,7 +156,7 @@ function grid_to_contour(
     header::ContourHeader,
     cint::Float32,
     tol::Float32,
-    outfile::String,
+    cntfile::String,
 )
     """
     Contour a field, then simplify the contours and write the simplified
