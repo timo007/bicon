@@ -184,4 +184,39 @@ function contour_to_grid(contour, inc, region)
     return grid
 end
 
+function map_params(region_name::Symbol)
+    """
+    Convert a region name (e.g. NZ) to GMT map projection parameters.
+    """
+    proj = Dict(
+        :NZ => Dict(
+            :proj =>
+                (name = :lambertConic, center = [170, -40], parallels = [-35, -45]),
+            :mapRegion => "142/-52/-170/-28+r",
+            :dataRegion => (140.0f0, 200.0f0, -55.0f0, -25.0f0),
+        ),
+        :SWP => Dict(
+            :proj => (name = :Mercator, center = [175, 0]),
+            :mapRegion => "150/240/-35/0",
+            :dataRegion => (150.0f0, 240.0f0, -35.0f0, 0.0f0),
+        ),
+        :UK => Dict(
+            :proj => (name = :conicEquidistant, center = [0, 50], parallels = [45, 55]),
+            :mapRegion => "-30/40/15/65+r",
+            :dataRegion => (0f0, 360f0, 40f0, 70f0),
+        ),
+        :Russia => Dict(
+            :proj => (name = :conicEquidistant, center = [100, 65], parallels = [60, 70]),
+            :mapRegion => "50/0/190/50+r",
+            :dataRegion => (0.0f0, 200.0f0, 0.0f0, 90.0f0),
+        ),
+        :World => Dict(
+            :proj => (name = :Robinson, center = 175),
+            :mapRegion => "0/360/-90/90",
+            :dataRegion => (0.0f0, 360.0f0, -90.0f0, 90.0f0),
+        ),
+    )
+    return proj[region_name]
+end
+
 end
