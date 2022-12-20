@@ -5,7 +5,7 @@ using GMT
 using Dates
 using Printf
 
-export contour_to_bin, bin_to_contour, ContourHeader, GRIBparam, NCEPvar_to_GRIBparam
+export contour_to_bin, bin_to_contour, ContourHeader, GRIBparam, NCEPvar_to_GRIBparam, grid_to_contour
 
 struct ContourHeader
     discipline::UInt8
@@ -149,6 +149,39 @@ function NCEPvar_to_GRIBparam(ncep_var::String,)
 		end
 
 		return GRIB_var
+end
+
+function grid_to_contour(
+    grid::GMTgrid,
+    header::ContourHeader,
+    cint::Float32,
+    tol::Float32,
+    outfile::String,
+)
+    """
+    Contour a field, then simplify the contours and write the simplified
+    contours to a binary contour file.
+
+    Arguments:
+    	grid:		GMT grid containting data to be contoured.
+    	header:	Header information
+    	cint:		Contour interval
+    	tol:		Contour tolerance (degrees)
+      cntfile:	Name of binary contour file to write.
+
+    Returns: Nothing (data is written to file)
+    """
+    grdcontour(grid, cont = cint, dump = "mslpcnt.gmt")
+    contour_data = gmtread("mslpcnt.gmt", table = true)
+    simplified_contour = gmtsimplify(contour_data, tol = tol)
+    contour_to_bin(simplified_contour, header, cntfile, zval = NaN32)
+end
+
+function contour_to_grid(contour, inc, region)
+    println("Converting contours to grid")
+    mean_contour = blockmean(contours, inc = inc, region = region)
+    grid = surface(mean_contour, inc = inc, region = region, tension = 0, A = "m")
+    return grid
 end
 
 end
