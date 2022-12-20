@@ -29,7 +29,7 @@ function map_params(region_name::Symbol)
         :UK => Dict(
             :proj => (name = :conicEquidistant, center = [0, 50], parallels = [45, 55]),
             :mapRegion => "-30/40/15/65+r",
-            :dataRegion => (0f0, 360f0, 40f0, 70f0),
+            :dataRegion => (0.0f0, 360.0f0, 40.0f0, 70.0f0),
         ),
         :Russia => Dict(
             :proj => (name = :conicEquidistant, center = [100, 65], parallels = [60, 70]),
@@ -152,7 +152,7 @@ function make_plot(mslp_grid, header::ContourHeader, region, titlestr, cpt)
             MAP_FRAME_TYPE = "plain",
         ),
     )
-    coast!(area = (0, 0, 1), res=:low, shore = "thinnest,white")
+    coast!(area = (0, 0, 1), res = :low, shore = "thinnest,white")
     grdcontour!(
         mslp_grid,
         annot = (int = 4, labels = (font = (6, "AvantGarde-Book"),)),
@@ -199,25 +199,22 @@ function main()
     # Read the command line.
     #
     parsed_args = parse_commandline()
-	 reg = Symbol(parsed_args["reg"])
+    reg = Symbol(parsed_args["reg"])
 
     #
     # Get the raw MSLP data from NCEP.
     #
-    raw_grid, mslp_header = get_data(
-        parsed_args["t"],
-        parsed_args["f"],
-        map_params(reg)[:dataRegion],
-    )
-    raw_grid = raw_grid / 100	# Convert Pa to hPa.
-	 #gmtwrite("raw.nc", raw_grid)
+    raw_grid, mslp_header =
+        get_data(parsed_args["t"], parsed_args["f"], map_params(reg)[:dataRegion])
+    raw_grid = raw_grid / 100# Convert Pa to hPa.
+    #gmtwrite("raw.nc", raw_grid)
 
     #
     # Contour the data, and save to file.
     #
     outfile = @sprintf(
         "mslp_%s_t%03dc%03d_%s_%03d.bin",
-		  parsed_args["reg"],
+        parsed_args["reg"],
         parsed_args["tol"] * 100,
         parsed_args["cnt"] * 100,
         parsed_args["t"],
@@ -247,8 +244,7 @@ function main()
         DateTime(parsed_args["t"], dateformat"yyyymmddHH") + Dates.Hour(parsed_args["f"]),
         "HH:MMZ e d u YYYY",
     )
-	 mslp_cpt = grd2cpt(raw_grid, cmap = :batlow, bg=:i,
-							  continuous=true, nlevels=true)
+    mslp_cpt = grd2cpt(raw_grid, cmap = :batlow, bg = :i, continuous = true, nlevels = true)
 
     subplot(
         grid = "2x1",
@@ -269,25 +265,13 @@ function main()
         "\"Gridded data as 32-bit floats: %s bytes\"",
         replace(format(length(raw_grid) * sizeof(Float32), commas = true), "," => " ")
     )
-    make_plot(
-        raw_grid,
-        mslp_header::ContourHeader,
-        reg,
-        raw_title,
-        mslp_cpt,
-    )
+    make_plot(raw_grid, mslp_header::ContourHeader, reg, raw_title, mslp_cpt)
     subplot(:set, panel = "next")
     cnt_title = @sprintf(
         "\"Contoured data: %s bytes\"",
         replace(format(filesize(outfile), commas = true), "," => " ")
     )
-    make_plot(
-        mslp_grid,
-        mslp_header::ContourHeader,
-        reg,
-        cnt_title,
-        mslp_cpt,
-    )
+    make_plot(mslp_grid, mslp_header::ContourHeader, reg, cnt_title, mslp_cpt)
     subplot(:show)
 
     #

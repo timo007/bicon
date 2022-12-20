@@ -5,7 +5,8 @@ using GMT
 using Dates
 using Printf
 
-export contour_to_bin, bin_to_contour, ContourHeader, GRIBparam, NCEPvar_to_GRIBparam, grid_to_contour
+export contour_to_bin,
+    bin_to_contour, ContourHeader, GRIBparam, NCEPvar_to_GRIBparam, grid_to_contour
 
 struct ContourHeader
     discipline::UInt8
@@ -109,46 +110,44 @@ function bin_to_contour(infile::String)
 end
 
 function GRIBparam(discipline::Integer, category::Integer, parameter::Integer)
-	"""
-	Read the parameter description (name) and units from the WMO GRIB-2 parameter
-	file (downloaded from WMO in CSV format).
+    """
+    Read the parameter description (name) and units from the WMO GRIB-2 parameter
+    file (downloaded from WMO in CSV format).
 
-	Arguments:
-		discipline:	Discipline - GRIB octet ...
-		category:   Category - GRIB octet ...
-		parameter:  Parameter - GRIB octet ..."
+    Arguments:
+    	discipline:	Discipline - GRIB octet ...
+    	category:   Category - GRIB octet ...
+    	parameter:  Parameter - GRIB octet ..."
 
-	Returns:
-	"""
-	name = "Unknown"
-	unit = "Unknown"
-	param = @sprintf("%d-%d-%d", discipline, category, parameter)
-	data = CSV.File("4.2.csv")
-	for row in data
-		if row[8] == param
-			name = match(r"\'(.*)\'", row[10])[1]
-			unit = match(r"unit\/(.*)>", row[2])[1]
-		end
-	end
-	return name, unit
+    Returns:
+    """
+    name = "Unknown"
+    unit = "Unknown"
+    param = @sprintf("%d-%d-%d", discipline, category, parameter)
+    data = CSV.File("4.2.csv")
+    for row in data
+        if row[8] == param
+            name = match(r"\'(.*)\'", row[10])[1]
+            unit = match(r"unit\/(.*)>", row[2])[1]
+        end
+    end
+    return name, unit
 end
 
-function NCEPvar_to_GRIBparam(ncep_var::String,)
-		""""
-		Convert NCEP parameter names to a tuple: (discipline, category, parameter)
-		as used in GRIB-2. This table needs serious work to be a bit more complete.
-		"""
-		ncep_table = Dict(
-				"prmslmsl" => (0, 3, 1),
-		)
+function NCEPvar_to_GRIBparam(ncep_var::String)
+    """"
+    Convert NCEP parameter names to a tuple: (discipline, category, parameter)
+    as used in GRIB-2. This table needs serious work to be a bit more complete.
+    """
+    ncep_table = Dict("prmslmsl" => (0, 3, 1))
 
-		if haskey(ncep_table, ncep_var)
-			GRIB_var = ncep_table[ncep_var]
-		else
-			GRIB_var = (255, 255, 255)
-		end
+    if haskey(ncep_table, ncep_var)
+        GRIB_var = ncep_table[ncep_var]
+    else
+        GRIB_var = (255, 255, 255)
+    end
 
-		return GRIB_var
+    return GRIB_var
 end
 
 function grid_to_contour(
@@ -203,7 +202,7 @@ function map_params(region_name::Symbol)
         :UK => Dict(
             :proj => (name = :conicEquidistant, center = [0, 50], parallels = [45, 55]),
             :mapRegion => "-30/40/15/65+r",
-            :dataRegion => (0f0, 360f0, 40f0, 70f0),
+            :dataRegion => (0.0f0, 360.0f0, 40.0f0, 70.0f0),
         ),
         :Russia => Dict(
             :proj => (name = :conicEquidistant, center = [100, 65], parallels = [60, 70]),
