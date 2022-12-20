@@ -15,7 +15,6 @@ export opendap_to_gmt, download_var
 function download_var(
 	 url::String,
 	 var::String,
-	 outdir::String;
     level::Float32 = NaN32,
 )
 	 # Collect the data from NCEP's OpenDAP server.
@@ -168,7 +167,17 @@ function parse_commandline()
         "-t"
         help = "NWP base time (yyyymmddHH)"
         default = "mslp.bin"
-        "-f"
+		  "-v"
+		  help = "NCEP variable to collect"
+		  default = "prmslmsl"
+		  "-p"
+		  help = "Vertical level (when required)"
+        arg_type = Float32
+		  default = NaN32
+		  "-s"
+		  help = "Scale factor (when required)"
+        arg_type = Float32
+		  default = 1
         "--tol"
         help = "Tolerance"
         arg_type = Float32
@@ -180,9 +189,6 @@ function parse_commandline()
         "--reg"
         help = "Region to plot"
         default = :NZ
-        "-o"
-        help = "Name of map file to produce"
-        default = "mslp.png"
     end
 
     return parse_args(s)
@@ -202,7 +208,7 @@ function main()
         "http://nomads.ncep.noaa.gov:80/dods/gfs_0p25/gfs",
 		  parsed_args["t"][1:8], "/gfs_0p25_", parsed_args["t"][9:10], "z",
     )
-	 file_list = download_var(ncep_url, "prmslmsl", "./",)
+	 file_list = download_var(ncep_url, parsed_args["v"],)
 
 	 #
 	 # Process the files listed on the command line
@@ -211,28 +217,24 @@ function main()
 		 # Try and extract variable, base time and lead time from the 
 		 # file name.
 		 cntfile = replace(file, ".nc" => ".bin")
-		 parts = match(r"^gfs_(\d{3})-(\d{3})-(\d{3})_(.{9})_(\d{10})_(\d{3}).nc", file)
-		 if parts[4] == "2dsurface"
-			 level = NaN32
-		 else
-			 level = parse(Float32, parts[4])
-		 end
+		 GRIBparam = NCEPvar_to_GRIBparam(var)
+		 fcst = match(r"^gfs_\d{3}-\d{3}-\d{3}_.{9}_\d{10}_(\d{3}).nc", file)[1]
 		 
 		 grid = gmtread(file, grid = true, region = map_params(reg)[:dataRegion])
 		 header = ContourHeader(
-										parse(UInt8, parts[1], base = 10),
-										parse(UInt8, parts[2], base = 10),
-										parse(UInt8, parts[3], base = 10),
-										datetime2unix(DateTime(parts[5], dateformat"yyyymmddHH")),
-										parse(Float32, parts[6]),
-										level,
+										GRIBparam[1],
+										GRIBparam[2],
+										GRIBparam[3],
+										datetime2unix(DateTime(parsed_args["t"], dateformat"yyyymmddHH")),
+										parse(Float32, fcst),
+										parsed_args["p"],
 										map_params(reg)[:dataRegion][1],
 										map_params(reg)[:dataRegion][2],
 										map_params(reg)[:dataRegion][3],
 										map_params(reg)[:dataRegion][4],
 		)
 		println("Contouring ", file)
-		grid = grid/100
+		grid = grid * parsed_args["s"]
       grid_to_contour(grid, header, parsed_args["cnt"], parsed_args["tol"], cntfile)
 
 	 end
