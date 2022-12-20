@@ -6,7 +6,8 @@ using Dates
 using Printf
 
 export contour_to_bin,
-    bin_to_contour, ContourHeader, GRIBparam, NCEPvar_to_GRIBparam, grid_to_contour, contour_to_grid
+    bin_to_contour, ContourHeader, GRIBparam, NCEPvar_to_GRIBparam,
+	grid_to_contour, contour_to_grid, map_params
 
 struct ContourHeader
     discipline::UInt8
@@ -189,7 +190,7 @@ end
 
 function contour_to_grid(contour, inc, region)
     println("Converting contours to grid")
-    mean_contour = blockmean(contours, inc = inc, region = region)
+    mean_contour = blockmean(contour, inc = inc, region = region)
     grid = surface(mean_contour, inc = inc, region = region, tension = 0, A = "m")
     return grid
 end
@@ -200,30 +201,35 @@ function map_params(region_name::Symbol)
     """
     proj = Dict(
         :NZ => Dict(
+            :dataRegion => (140.0f0, 200.0f0, -55.0f0, -25.0f0),
             :proj =>
                 (name = :lambertConic, center = [170, -40], parallels = [-35, -45]),
             :mapRegion => "142/-52/-170/-28+r",
-            :dataRegion => (140.0f0, 200.0f0, -55.0f0, -25.0f0),
+        		:frame => (axes = :WSen, ticks = 1, grid = 10, annot = 10),
         ),
         :SWP => Dict(
+            :dataRegion => (150.0f0, 240.0f0, -35.0f0, 0.0f0),
             :proj => (name = :Mercator, center = [175, 0]),
             :mapRegion => "150/240/-35/0",
-            :dataRegion => (150.0f0, 240.0f0, -35.0f0, 0.0f0),
+        		:frame => (axes = :wsen, ticks = 360, grid = 360),
         ),
         :UK => Dict(
+            :dataRegion => (0f0, 360f0, 40f0, 70f0),
             :proj => (name = :conicEquidistant, center = [0, 50], parallels = [45, 55]),
             :mapRegion => "-30/40/15/65+r",
-            :dataRegion => (0.0f0, 360.0f0, 40.0f0, 70.0f0),
+        		:frame => (axes = :wsen, ticks = 360, grid = 360),
         ),
         :Russia => Dict(
+            :dataRegion => (0.0f0, 200.0f0, 0.0f0, 90.0f0),
             :proj => (name = :conicEquidistant, center = [100, 65], parallels = [60, 70]),
             :mapRegion => "50/0/190/50+r",
-            :dataRegion => (0.0f0, 200.0f0, 0.0f0, 90.0f0),
+        		:frame => (axes = :wsen, ticks = 360, grid = 360),
         ),
         :World => Dict(
+            :dataRegion => (0.0f0, 360.0f0, -90.0f0, 90.0f0),
             :proj => (name = :Robinson, center = 175),
             :mapRegion => "0/360/-90/90",
-            :dataRegion => (0.0f0, 360.0f0, -90.0f0, 90.0f0),
+        		:frame => (axes = :wsen, ticks = 360, grid = 360),
         ),
     )
     return proj[region_name]
