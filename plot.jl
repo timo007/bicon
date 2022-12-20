@@ -9,7 +9,7 @@ using GMT
 using Printf
 
 
-function make_plot(mslp_grid, header::ContourHeader, region, outfile)
+function make_plot(mslp_grid, header::ContourHeader, region, contint, outfile)
     valid_time = Dates.format(
         unix2datetime(header.base_time) + Dates.Hour(header.lead_time),
         "HH:MMZ e d u YYYY",
@@ -44,8 +44,8 @@ function make_plot(mslp_grid, header::ContourHeader, region, outfile)
     coast!(area = (0, 0, 1), shore = "thinnest,white")
     grdcontour!(
         mslp_grid,
-        annot = (int = 4, labels = (font = (8, "AvantGarde-Book"),)),
-        cont = 2,
+        annot = (int = contint*2, labels = (font = (8, "AvantGarde-Book"),)),
+        cont = contint,
         pen = "thin, black",
         labels = (dist = 4,),
         savefig = outfile,
@@ -60,7 +60,10 @@ function parse_commandline()
         arg_type = AbstractString
         help = "Name or URL of the data file"
         default = "http://nomuka.com/data/mslp_NZ_t025c200_2022121818_000.bin"
-        "-f"
+        "--cnt"
+		  help = "Contour spacing"
+		  arg_type = Float32
+		  default = Float32(2)
         "--inc"
         help = "MSLP grid spacing"
         default = "15m/15m"
@@ -112,7 +115,7 @@ function main()
     #
     # Make the plot.
     #
-    make_plot(mslp_grid, mslp_header::ContourHeader, reg, parsed_args["o"])
+	 make_plot(mslp_grid, mslp_header::ContourHeader, reg, parsed_args["cnt"], parsed_args["o"])
 
 end
 
