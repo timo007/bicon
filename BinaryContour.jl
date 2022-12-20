@@ -211,7 +211,7 @@ function map_params(region_name::Symbol)
             :dataRegion => (150.0f0, 240.0f0, -35.0f0, 0.0f0),
             :proj => (name = :Mercator, center = [175, 0]),
             :mapRegion => "150/240/-35/0",
-        		:frame => (axes = :wsen, ticks = 360, grid = 360),
+        		:frame => (axes = :WSen, ticks = 2, grid = 10, annot = 10),
         ),
         :UK => Dict(
             :dataRegion => (0f0, 360f0, 40f0, 70f0),
