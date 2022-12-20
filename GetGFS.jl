@@ -205,7 +205,7 @@ function main()
             map_params(reg)[:dataRegion][3],
             map_params(reg)[:dataRegion][4],
         )
-        println("Contouring ", file)
+        println("Contouring ", cntfile)
         grid = grid * parsed_args["s"]
         grid_to_contour(grid, header, parsed_args["cnt"], parsed_args["tol"], cntfile)
 
