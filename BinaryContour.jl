@@ -6,8 +6,13 @@ using Dates
 using Printf
 
 export contour_to_bin,
-    bin_to_contour, ContourHeader, GRIBparam, NCEPvar_to_GRIBparam,
-	grid_to_contour, contour_to_grid, map_params
+    bin_to_contour,
+    ContourHeader,
+    GRIBparam,
+    NCEPvar_to_GRIBparam,
+    grid_to_contour,
+    contour_to_grid,
+    map_params
 
 struct ContourHeader
     discipline::UInt8
@@ -15,7 +20,7 @@ struct ContourHeader
     parameter::UInt8
     base_time::Float64
     lead_time::Float32
-	 prs::String
+    prs::String
     west::Float32
     east::Float32
     south::Float32
@@ -29,9 +34,9 @@ function contour_to_bin(
     outfile::String;
     zval::Float32 = 1,
 )
-	"""
-	Convert contours (in GMT data sets) to binary encoded contours.
-	"""
+    """
+    Convert contours (in GMT data sets) to binary encoded contours.
+    """
     #
     # Write the contours in binary, network endianess.
     #
@@ -79,7 +84,7 @@ function bin_to_contour(infile::String)
         read!(file, var)
         bt = ntoh(read(file, Float64))
         lt = ntoh(read(file, Float32))
-		  read!(file, prs)
+        read!(file, prs)
         read!(file, region)
         region = ntoh.(region)
         header = ContourHeader(
@@ -87,8 +92,8 @@ function bin_to_contour(infile::String)
             var[2],
             var[3],
             bt,
-				lt,
-				String(prs),
+            lt,
+            String(prs),
             region[1],
             region[2],
             region[3],
@@ -121,7 +126,7 @@ function GRIBparam(discipline::Integer, category::Integer, parameter::Integer)
     Read the parameter description (name) and units from the WMO GRIB-2 parameter
     file (downloaded from WMO in CSV format).
 
-	 Data are available here: http://codes.wmo.int/grib2/codeflag/4.2?_format=csv
+  Data are available here: http://codes.wmo.int/grib2/codeflag/4.2?_format=csv
 
     Arguments:
     	discipline:	Discipline - GRIB octet ...
@@ -149,20 +154,21 @@ function NCEPvar_to_GRIBparam(ncep_var::String)
     as used in GRIB-2. This table needs serious work to be a bit more complete.
     """
     ncep_table = Dict(
-		 "tmax2m"   => (0, 0, 4, "2m"),
-		 "tmin2m"   => (0, 0, 5, "2m"),
-		 "tmpsfc"   => (0, 0, 0, "Surface"),
-		 "tmp2m"    => (0, 0, 0, "2m"),
-		 "rh2m"     => (0, 1, 1, "2m"),
-		 "apcpsfc"  => (0, 1, 8, "Surface"),
-		 "gustsfc"	=> (0, 2, 22, "Surface"),
-		 "prmslmsl" => (0, 3, 1, "MSL"),
-	 )
+        "tmax2m" => (0, 0, 4, "2m"),
+        "tmin2m" => (0, 0, 5, "2m"),
+        "tmpsfc" => (0, 0, 0, "Surface"),
+        "tmp2m" => (0, 0, 0, "2m"),
+        "rh2m" => (0, 1, 1, "2m"),
+        "apcpsfc" => (0, 1, 8, "Surface"),
+        "gustsfc" => (0, 2, 22, "Surface"),
+        "prmslmsl" => (0, 3, 1, "MSL"),
+        "tozneclm" => (0, 14, 0, "Atmos"),
+    )
 
     if haskey(ncep_table, ncep_var)
         GRIB_var = ncep_table[ncep_var]
     else
-		 GRIB_var = (255, 255, 255, "Unknown")
+        GRIB_var = (255, 255, 255, "Unknown")
     end
 
     return GRIB_var
@@ -211,37 +217,37 @@ function map_params(region_name::Symbol)
             :proj =>
                 (name = :lambertConic, center = [170, -40], parallels = [-35, -45]),
             :mapRegion => "142/-52/-170/-28+r",
-        		:frame => (axes = :WSen, ticks = 1, grid = 10, annot = 10),
+            :frame => (axes = :WSen, ticks = 1, grid = 10, annot = 10),
         ),
         :SWP => Dict(
             :dataRegion => (150.0f0, 240.0f0, -35.0f0, 0.0f0),
             :proj => (name = :Mercator, center = [175, 0]),
             :mapRegion => "150/240/-35/0",
-        		:frame => (axes = :WSen, ticks = 2, grid = 10, annot = 10),
+            :frame => (axes = :WSen, ticks = 2, grid = 10, annot = 10),
         ),
         :Tonga => Dict(
             :dataRegion => (175.0f0, 195.0f0, -30.0f0, -10.0f0),
             :proj => (name = :Mercator, center = [182, 0]),
             :mapRegion => "175/195/-30/-10",
-        		:frame => (axes = :WSen, ticks = 1, grid = 5, annot = 5),
+            :frame => (axes = :WSen, ticks = 1, grid = 5, annot = 5),
         ),
         :UK => Dict(
-            :dataRegion => (0f0, 360f0, 40f0, 70f0),
+            :dataRegion => (0.0f0, 360.0f0, 40.0f0, 70.0f0),
             :proj => (name = :conicEquidistant, center = [0, 50], parallels = [45, 55]),
             :mapRegion => "-30/40/15/65+r",
-        		:frame => (axes = :wsen, ticks = 360, grid = 360),
+            :frame => (axes = :wsen, ticks = 360, grid = 360),
         ),
         :Russia => Dict(
             :dataRegion => (0.0f0, 200.0f0, 0.0f0, 90.0f0),
             :proj => (name = :conicEquidistant, center = [100, 65], parallels = [60, 70]),
             :mapRegion => "50/0/190/50+r",
-        		:frame => (axes = :wsen, ticks = 360, grid = 360),
+            :frame => (axes = :wsen, ticks = 360, grid = 360),
         ),
         :World => Dict(
             :dataRegion => (0.0f0, 360.0f0, -90.0f0, 90.0f0),
             :proj => (name = :Robinson, center = 175),
             :mapRegion => "0/360/-90/90",
-        		:frame => (axes = :wsen, ticks = 360, grid = 360),
+            :frame => (axes = :wsen, ticks = 360, grid = 360),
         ),
     )
     return proj[region_name]

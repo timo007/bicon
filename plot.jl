@@ -20,11 +20,22 @@ function make_plot(mslp_grid, header::ContourHeader, region, contint, cpt, outfi
         fcst_type = @sprintf("%dh forecast", header.lead_time)
     end
     var, unit = GRIBparam(header.discipline, header.category, header.parameter)
-	 title = @sprintf("\"%s %s (%s)\\072 %s valid at %s\"", strip(header.prs, ' '), var, unit, fcst_type, valid_time)
+    gmtunit = replace(unit, r"([-\d]+)" => s"@+\1@+", "_" => " ")
+    title = @sprintf(
+        "\"%s %s (%s)\\072 %s valid at %s\"",
+        strip(header.prs, ' '),
+        lowercase(var),
+        gmtunit,
+        fcst_type,
+        valid_time
+    )
 
     if !isfile(cpt)
-		 cpt = grd2cpt(mslp_grid, cmap = cpt, bg = :i, continuous = true, nlevels = true)
-	 end
+        cpt = grd2cpt(mslp_grid, cmap = cpt, bg = :i, continuous = true, nlevels = true)
+        annotint = parse(Float32, contint) * 2
+    else
+        annotint = Float32(4)
+    end
 
     #
     # Plot the data on a map.
@@ -46,7 +57,7 @@ function make_plot(mslp_grid, header::ContourHeader, region, contint, cpt, outfi
     coast!(area = (0, 0, 1), shore = "thinnest,brown")
     grdcontour!(
         mslp_grid,
-        annot = (int = 4, labels = (font = (8, "AvantGarde-Book"),)),
+        annot = (int = annotint, labels = (font = (8, "AvantGarde-Book"),)),
         cont = contint,
         pen = "thin, black",
         labels = (dist = 4,),
@@ -63,11 +74,11 @@ function parse_commandline()
         help = "Name or URL of the data file"
         default = "http://nomuka.com/data/mslp_NZ_t025c200_2022121818_000.bin"
         "--cnt"
-		  help = "Contour spacing"
-		  default = 2
+        help = "Contour spacing"
+        default = 2
         "--cpt"
-		  help = "Colour palette"
-		  default = "batlow"
+        help = "Colour palette"
+        default = "batlow"
         "--inc"
         help = "MSLP grid spacing"
         default = "15m/15m"
@@ -119,8 +130,14 @@ function main()
     #
     # Make the plot.
     #
-	 make_plot(mslp_grid, mslp_header::ContourHeader, reg, parsed_args["cnt"],
-				  parsed_args["cpt"], parsed_args["o"])
+    make_plot(
+        mslp_grid,
+        mslp_header::ContourHeader,
+        reg,
+        parsed_args["cnt"],
+        parsed_args["cpt"],
+        parsed_args["o"],
+    )
 
 end
 
