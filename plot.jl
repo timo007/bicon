@@ -23,7 +23,7 @@ function make_plot(mslp_grid, header::ContourHeader, region, contint, cpt, outfi
     gmtunit = replace(unit, r"([-\d]+)" => s"@+\1@+", "_" => " ")
     title = @sprintf(
         "\"%s %s (%s)\\072 %s valid at %s\"",
-        strip(header.prs, ' '),
+        strip(header.level, ' '),
         lowercase(var),
         gmtunit,
         fcst_type,

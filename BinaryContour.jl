@@ -20,7 +20,7 @@ struct ContourHeader
     parameter::UInt8
     base_time::Float64
     lead_time::Float32
-    prs::String
+    level::String
     west::Float32
     east::Float32
     south::Float32
@@ -46,7 +46,7 @@ function contour_to_bin(
         write(file, hton(header.parameter))
         write(file, hton(header.base_time))
         write(file, hton(header.lead_time))
-        write(file, header.prs)
+        write(file, header.level)
         write(file, hton(header.west))
         write(file, hton(header.east))
         write(file, hton(header.south))
@@ -79,12 +79,12 @@ end
 function bin_to_contour(infile::String)
     open(infile, "r") do file
         var = Vector{UInt8}(undef, 3)
-        prs = Vector{UInt8}(undef, 8)
+        level = Vector{UInt8}(undef, 8)
         region = Vector{Float32}(undef, 4)
         read!(file, var)
         bt = ntoh(read(file, Float64))
         lt = ntoh(read(file, Float32))
-        read!(file, prs)
+        read!(file, level)
         read!(file, region)
         region = ntoh.(region)
         header = ContourHeader(
@@ -93,7 +93,7 @@ function bin_to_contour(infile::String)
             var[3],
             bt,
             lt,
-            String(prs),
+            String(level),
             region[1],
             region[2],
             region[3],
