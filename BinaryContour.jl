@@ -225,11 +225,18 @@ function map_params(region_name::Symbol)
             :mapRegion => "150/240/-35/0",
             :frame => (axes = :WSen, ticks = 2, grid = 10, annot = 10),
         ),
-        :Tonga => Dict(
+        :TON => Dict(
             :dataRegion => (175.0f0, 195.0f0, -30.0f0, -10.0f0),
             :proj => (name = :Mercator, center = [182, 0]),
             :mapRegion => "175/195/-30/-10",
             :frame => (axes = :WSen, ticks = 1, grid = 5, annot = 5),
+        ),
+		  :AUS => Dict(
+            :dataRegion => (70.0f0, 190.0f0, -60.0f0, 0.0f0),
+            :proj =>
+                (name = :lambertConic, center = [130, -30], parallels = [-20, -40]),
+            :mapRegion => "80/-50/165/-3+r",
+            :frame => (axes = :WSen, ticks = 2, grid = 10, annot = 10),
         ),
         :UK => Dict(
             :dataRegion => (0.0f0, 360.0f0, 40.0f0, 70.0f0),
