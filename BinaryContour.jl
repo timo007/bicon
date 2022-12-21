@@ -153,6 +153,7 @@ function NCEPvar_to_GRIBparam(ncep_var::String)
 		 "tmin2m"   => (0, 0, 5, "2m"),
 		 "tmpsfc"   => (0, 0, 0, "Surface"),
 		 "tmp2m"    => (0, 0, 0, "2m"),
+		 "rh2m"     => (0, 1, 1, "2m"),
 		 "apcpsfc"  => (0, 1, 8, "Surface"),
 		 "gustsfc"	=> (0, 2, 22, "Surface"),
 		 "prmslmsl" => (0, 3, 1, "MSL"),
