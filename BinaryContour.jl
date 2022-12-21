@@ -177,7 +177,7 @@ end
 function grid_to_contour(
     grid::GMTgrid,
     header::ContourHeader,
-    cint,
+	 cint::Union{Float32, String},
     tol::Float32,
     cntfile::String,
 )
@@ -185,18 +185,22 @@ function grid_to_contour(
     Contour a field, then simplify the contours and write the simplified
     contours to a binary contour file.
 
+	 Contours are initially written to a temporary file, which is deleted
+	 after it has served its purpose.
+
     Arguments:
     	grid:		GMT grid containting data to be contoured.
     	header:	Header information
-    	cint:		Contour interval
+    	cint:		Contour interval or a the name of a colour palette file to get contours from.
     	tol:		Contour tolerance (degrees)
       cntfile:	Name of binary contour file to write.
 
     Returns: Nothing (data is written to file)
     """
-    grdcontour(grid, cont = cint, dump = "mslpcnt.gmt")
-    contour_data = gmtread("mslpcnt.gmt", table = true)
-    simplified_contour = gmtsimplify(contour_data, tol = tol)
+	 contour_file = tempname()
+    grdcontour(grid, cont = cint, dump = contour_file)
+    simplified_contour = gmtsimplify(contour_file, tol = tol)
+	 rm(contour_file)
     contour_to_bin(simplified_contour, header, cntfile, zval = NaN32)
 end
 
