@@ -24,7 +24,7 @@ function make_plot(mslp_grid, header::ContourHeader, region, contint, cpt, outfi
     title = @sprintf(
         "\"%s %s (%s)\\072 %s valid at %s\"",
         strip(header.level, ' '),
-        lowercase(var),
+        lowercasefirst(var),
         gmtunit,
         fcst_type,
         valid_time

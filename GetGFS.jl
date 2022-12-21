@@ -155,7 +155,7 @@ function parse_commandline()
         default = 2
         "--reg"
         help = "Region to plot"
-        default = :NZ
+        default = "NZ"
     end
 
     return parse_args(s)
