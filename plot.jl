@@ -9,7 +9,7 @@ using GMT
 using Printf
 
 
-function make_plot(mslp_grid, header::ContourHeader, region, contint, cpt, outfile)
+function make_plot(mslp_grid, header::ContourHeader, region, contint::Union{Number, String}, cpt, outfile)
     valid_time = Dates.format(
         unix2datetime(header.base_time) + Dates.Hour(header.lead_time),
         "HH:MMZ e d u YYYY",
@@ -30,7 +30,7 @@ function make_plot(mslp_grid, header::ContourHeader, region, contint, cpt, outfi
         valid_time
     )
 
-    if !isfile(cpt)
+	 if !isfile(contint)
         cpt = grd2cpt(mslp_grid, cmap = cpt, bg = :i, continuous = true, nlevels = true)
         annotint = parse(Float32, contint) * 2
     else
@@ -75,7 +75,7 @@ function parse_commandline()
         default = "http://nomuka.com/data/mslp_NZ_t025c200_2022121818_000.bin"
         "--cnt"
         help = "Contour spacing"
-        default = 2
+		  default = 2
         "--cpt"
         help = "Colour palette"
         default = "batlow"

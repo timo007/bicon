@@ -206,7 +206,7 @@ end
 
 function contour_to_grid(contour, inc, region)
     println("Converting contours to grid")
-    mean_contour = blockmean(contour, inc = inc, region = region)
+    mean_contour = blockmean(contour, inc = inc, region = region, center = true)
     grid = surface(mean_contour, inc = inc, region = region, tension = 0, A = "m")
     return grid
 end
