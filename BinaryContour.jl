@@ -148,6 +148,121 @@ function GRIBparam(discipline::Integer, category::Integer, parameter::Integer)
     return name, unit
 end
 
+
+function grid_to_contour(
+    grid::GMTgrid,
+    header::ContourHeader,
+    cint::Union{Float32,String},
+    tol::Float32,
+    cntfile::String,
+)
+    """
+    Contour a field, then simplify the contours and write the simplified
+    contours to a binary contour file.
+
+  Contours are initially written to a temporary file, which is deleted
+  after it has served its purpose.
+
+    Arguments:
+    	grid:		GMT grid containting data to be contoured.
+    	header:	Header information
+    	cint:		Contour interval or the name of a colour palette file to get contours from.
+    	tol:		Contour tolerance (degrees)
+      cntfile:	Name of binary contour file to write.
+
+    Returns: Nothing (data is written to file)
+    """
+    contour_file = tempname()
+    grdcontour(grid, cont = cint, dump = contour_file)
+    simplified_contour = gmtsimplify(contour_file, tol = tol)
+    rm(contour_file)
+    contour_to_bin(simplified_contour, header, cntfile, zval = NaN32)
+end
+
+function contour_to_grid(
+    contour::Vector{GMTdataset{Float32,2}},
+    inc::String,
+    region::NTuple{4,Float32},
+)
+    """
+    Convert contour lines to a regular grid.
+
+    Arguments:
+    	contour:		The contour lines in GMTdataset format.
+    	inc:			The grid resolution (e.g. 15m/15m for 0.25°x0.25°)
+    	region:		The region (west, east, south, north)
+
+    Returns:
+    	A GMTgrid containing the data on a regular grid.
+    """
+    println("Converting contours to grid")
+    mean_contour = blockmean(contour, inc = inc, region = region, center = true)
+    grid = surface(mean_contour, inc = inc, region = region, tension = 0, A = "m")
+    return grid
+end
+
+function map_params(region_name::Symbol)
+    """
+    Convert a region name (e.g. NZ) to GMT map projection parameters.
+
+  Argument:
+  	region_name		A symbol representing the region.
+  					:NZ = New Zealand
+  					:SWP = South West Pacific
+  					:TON = Tonga
+  					:AUS = Australia
+  					:UK = United Kingdom
+  					:WORLD = World
+
+  Return:
+  	Returns a dictionary with the various map related parameters for the
+  	region of interest. More information on these parameters can be found
+  	in the GMT documentation.
+
+    """
+    proj = Dict(
+        :NZ => Dict(
+            :dataRegion => (140.0f0, 200.0f0, -55.0f0, -25.0f0),
+            :proj =>
+                (name = :lambertConic, center = [170, -40], parallels = [-35, -45]),
+            :mapRegion => "142/-52/-170/-28+r",
+            :frame => (axes = :WSen, ticks = 1, grid = 10, annot = 10),
+        ),
+        :SWP => Dict(
+            :dataRegion => (150.0f0, 240.0f0, -35.0f0, 0.0f0),
+            :proj => (name = :Mercator, center = [175, 0]),
+            :mapRegion => "150/240/-35/0",
+            :frame => (axes = :WSen, ticks = 2, grid = 10, annot = 10),
+        ),
+        :TON => Dict(
+            :dataRegion => (175.0f0, 195.0f0, -30.0f0, -10.0f0),
+            :proj => (name = :Mercator, center = [182, 0]),
+            :mapRegion => "175/195/-30/-10",
+            :frame => (axes = :WSen, ticks = 1, grid = 5, annot = 5),
+        ),
+        :AUS => Dict(
+            :dataRegion => (70.0f0, 190.0f0, -60.0f0, 0.0f0),
+            :proj =>
+                (name = :lambertConic, center = [130, -30], parallels = [-20, -40]),
+            :mapRegion => "80/-50/165/-3+r",
+            :frame => (axes = :WSen, ticks = 2, grid = 10, annot = 10),
+        ),
+        :UK => Dict(
+            :dataRegion => (0.0f0, 360.0f0, 40.0f0, 70.0f0),
+            :proj => (name = :conicEquidistant, center = [0, 50], parallels = [45, 55]),
+            :mapRegion => "-30/40/15/65+r",
+            :frame => (axes = :wsen, ticks = 360, grid = 360),
+        ),
+        :WORLD => Dict(
+            :dataRegion => (0.0f0, 360.0f0, -90.0f0, 90.0f0),
+            :proj => (name = :Robinson, center = 175),
+            :mapRegion => "0/360/-90/90",
+            :frame => (axes = :wsen, ticks = 360, grid = 360),
+        ),
+    )
+    return proj[region_name]
+end
+
 function NCEPvar_to_GRIBparam(ncep_var::String)
     """"
     Convert NCEP parameter names to a tuple: (discipline, category, parameter, level)
@@ -172,96 +287,6 @@ function NCEPvar_to_GRIBparam(ncep_var::String)
     end
 
     return GRIB_var
-end
-
-function grid_to_contour(
-    grid::GMTgrid,
-    header::ContourHeader,
-	 cint::Union{Float32, String},
-    tol::Float32,
-    cntfile::String,
-)
-    """
-    Contour a field, then simplify the contours and write the simplified
-    contours to a binary contour file.
-
-	 Contours are initially written to a temporary file, which is deleted
-	 after it has served its purpose.
-
-    Arguments:
-    	grid:		GMT grid containting data to be contoured.
-    	header:	Header information
-    	cint:		Contour interval or a the name of a colour palette file to get contours from.
-    	tol:		Contour tolerance (degrees)
-      cntfile:	Name of binary contour file to write.
-
-    Returns: Nothing (data is written to file)
-    """
-	 contour_file = tempname()
-    grdcontour(grid, cont = cint, dump = contour_file)
-    simplified_contour = gmtsimplify(contour_file, tol = tol)
-	 rm(contour_file)
-    contour_to_bin(simplified_contour, header, cntfile, zval = NaN32)
-end
-
-function contour_to_grid(contour, inc, region)
-    println("Converting contours to grid")
-    mean_contour = blockmean(contour, inc = inc, region = region, center = true)
-    grid = surface(mean_contour, inc = inc, region = region, tension = 0, A = "m")
-    return grid
-end
-
-function map_params(region_name::Symbol)
-    """
-    Convert a region name (e.g. NZ) to GMT map projection parameters.
-    """
-    proj = Dict(
-        :NZ => Dict(
-            :dataRegion => (140.0f0, 200.0f0, -55.0f0, -25.0f0),
-            :proj =>
-                (name = :lambertConic, center = [170, -40], parallels = [-35, -45]),
-            :mapRegion => "142/-52/-170/-28+r",
-            :frame => (axes = :WSen, ticks = 1, grid = 10, annot = 10),
-        ),
-        :SWP => Dict(
-            :dataRegion => (150.0f0, 240.0f0, -35.0f0, 0.0f0),
-            :proj => (name = :Mercator, center = [175, 0]),
-            :mapRegion => "150/240/-35/0",
-            :frame => (axes = :WSen, ticks = 2, grid = 10, annot = 10),
-        ),
-        :TON => Dict(
-            :dataRegion => (175.0f0, 195.0f0, -30.0f0, -10.0f0),
-            :proj => (name = :Mercator, center = [182, 0]),
-            :mapRegion => "175/195/-30/-10",
-            :frame => (axes = :WSen, ticks = 1, grid = 5, annot = 5),
-        ),
-		  :AUS => Dict(
-            :dataRegion => (70.0f0, 190.0f0, -60.0f0, 0.0f0),
-            :proj =>
-                (name = :lambertConic, center = [130, -30], parallels = [-20, -40]),
-            :mapRegion => "80/-50/165/-3+r",
-            :frame => (axes = :WSen, ticks = 2, grid = 10, annot = 10),
-        ),
-        :UK => Dict(
-            :dataRegion => (0.0f0, 360.0f0, 40.0f0, 70.0f0),
-            :proj => (name = :conicEquidistant, center = [0, 50], parallels = [45, 55]),
-            :mapRegion => "-30/40/15/65+r",
-            :frame => (axes = :wsen, ticks = 360, grid = 360),
-        ),
-        :Russia => Dict(
-            :dataRegion => (0.0f0, 200.0f0, 0.0f0, 90.0f0),
-            :proj => (name = :conicEquidistant, center = [100, 65], parallels = [60, 70]),
-            :mapRegion => "50/0/190/50+r",
-            :frame => (axes = :wsen, ticks = 360, grid = 360),
-        ),
-        :World => Dict(
-            :dataRegion => (0.0f0, 360.0f0, -90.0f0, 90.0f0),
-            :proj => (name = :Robinson, center = 175),
-            :mapRegion => "0/360/-90/90",
-            :frame => (axes = :wsen, ticks = 360, grid = 360),
-        ),
-    )
-    return proj[region_name]
 end
 
 end
