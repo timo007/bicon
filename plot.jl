@@ -113,7 +113,12 @@ function main()
     if isfile(parsed_args["i"])
         infile = parsed_args["i"]
     else
-        Downloads.download(parsed_args["i"], "./data.bin")
+        try
+            Downloads.download(parsed_args["i"], "./data.bin")
+        catch
+            println("Unable to download the data file.")
+				exit()
+        end
         println(
             @sprintf("Downloaded %s: %d bytes", parsed_args["i"], filesize("./data.bin"))
         )
