@@ -38,7 +38,7 @@ function download_var(url::String, var::String, level::Float32 = NaN32)
     #
     file_list = String[]
     for t = 1:length(valtime)
-        base_time = Dates.format(valtime[1], "yyyymmddHH")
+        basetime_str = Dates.format(basetime, "yyyymmddHH")
         lead_time = Dates.value(valtime[t] - basetime) / 3600000 # ms to hours.
         GRIBparam = NCEPvar_to_GRIBparam(var)
         outfile = @sprintf(
@@ -47,7 +47,7 @@ function download_var(url::String, var::String, level::Float32 = NaN32)
             GRIBparam[2],
             GRIBparam[3],
             strip(GRIBparam[4], ' '),
-            base_time,
+            basetime_str,
             lead_time
         )
         push!(file_list, outfile)
