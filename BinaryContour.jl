@@ -12,7 +12,8 @@ export contour_to_bin,
     NCEPvar_to_GRIBparam,
     grid_to_contour,
     contour_to_grid,
-    map_params
+    map_params,
+	 data_region
 
 struct ContourHeader
     discipline::UInt8
@@ -160,8 +161,8 @@ function grid_to_contour(
     Contour a field, then simplify the contours and write the simplified
     contours to a binary contour file.
 
-  Contours are initially written to a temporary file, which is deleted
-  after it has served its purpose.
+    Contours are initially written to a temporary file, which is deleted
+    after it has served its purpose.
 
     Arguments:
     	grid:		GMT grid containting data to be contoured.
@@ -201,6 +202,32 @@ function contour_to_grid(
     return grid
 end
 
+function data_region(region_name::Symbol; border::Float32 = 0.25f0,)
+	"""
+	Work out what rectangular region of data we need to cut out to cover
+	the domain covered by the map. Add an extra border around this region
+	to prevent any edge anomalies.
+
+	Arguments:
+		region_name:	Symbol representing the region (:NZ etc)
+		border:			Border to put around the data.
+	"""
+	region_ds = mapproject(region = map_params(region_name)[:mapRegion],
+									proj = map_params(region_name)[:proj],
+									map_size="E",)
+	bltr = match(r"^-R([-\.\d]+)/([-\.\d]+)/([-\.\d]+)/([-\.\d]+)", region_ds.text[1])
+	bllon = parse(Float32, bltr[1]) - border
+	bllat = parse(Float32, bltr[2]) - border
+	trlon = parse(Float32, bltr[3]) + border
+	trlat = parse(Float32, bltr[4]) + border
+	bllat = max(-90, bllat)
+	bllon = max(0, bllon)
+	trlat = min(90, trlat)
+	trlon = min(360, trlon)
+	wesn = (min(bllon, trlon), max(bllon, trlon), min(bllat, trlat), max(bllat, trlat))
+	return(wesn)
+end
+
 function map_params(region_name::Symbol)
     """
     Convert a region name (e.g. NZ) to GMT map projection parameters.
@@ -222,14 +249,12 @@ function map_params(region_name::Symbol)
     """
     proj = Dict(
         :NZ => Dict(
-            :dataRegion => (140.0f0, 200.0f0, -55.0f0, -25.0f0),
             :proj =>
                 (name = :lambertConic, center = [170, -40], parallels = [-35, -45]),
             :mapRegion => "142/-52/-170/-28+r",
             :frame => (axes = :WSen, ticks = 1, grid = 10, annot = 10),
         ),
         :SWP => Dict(
-            :dataRegion => (150.0f0, 240.0f0, -35.0f0, 0.0f0),
             :proj => (name = :Mercator, center = [175, 0]),
             :mapRegion => "150/240/-35/0",
             :frame => (axes = :WSen, ticks = 2, grid = 10, annot = 10),
@@ -241,20 +266,17 @@ function map_params(region_name::Symbol)
             :frame => (axes = :WSen, ticks = 1, grid = 5, annot = 5),
         ),
         :AUS => Dict(
-            :dataRegion => (70.0f0, 190.0f0, -60.0f0, 0.0f0),
             :proj =>
                 (name = :lambertConic, center = [130, -30], parallels = [-20, -40]),
             :mapRegion => "80/-50/165/-3+r",
             :frame => (axes = :WSen, ticks = 2, grid = 10, annot = 10),
         ),
         :UK => Dict(
-            :dataRegion => (0.0f0, 360.0f0, 40.0f0, 70.0f0),
             :proj => (name = :conicEquidistant, center = [0, 50], parallels = [45, 55]),
             :mapRegion => "-30/40/15/65+r",
             :frame => (axes = :wsen, ticks = 360, grid = 360),
         ),
         :WORLD => Dict(
-            :dataRegion => (0.0f0, 360.0f0, -90.0f0, 90.0f0),
             :proj => (name = :Robinson, center = 175),
             :mapRegion => "0/360/-90/90",
             :frame => (axes = :wsen, ticks = 360, grid = 360),

@@ -190,7 +190,8 @@ function main()
         GRIBparam = NCEPvar_to_GRIBparam(parsed_args["v"])
         fcst = match(r"^.*_(\d{3}).nc", file)[1]
 
-        grid = gmtread(file, grid = true, region = map_params(reg)[:dataRegion])
+		  grid = gmtread(file, grid = true, region = data_region(reg,))
+		  gmtwrite(file*".new", grid)
         header = ContourHeader(
             GRIBparam[1],
             GRIBparam[2],
@@ -198,10 +199,10 @@ function main()
             datetime2unix(DateTime(parsed_args["t"], dateformat"yyyymmddHH")),
             parse(Float32, fcst),
             lpad(GRIBparam[4], 8, ' '),
-            map_params(reg)[:dataRegion][1],
-            map_params(reg)[:dataRegion][2],
-            map_params(reg)[:dataRegion][3],
-            map_params(reg)[:dataRegion][4],
+				data_region(reg,)[1],
+            data_region(reg,)[2],
+            data_region(reg,)[3],
+            data_region(reg,)[4],
         )
         println("Contouring ", cntfile)
         grid = grid * parsed_args["s"]
