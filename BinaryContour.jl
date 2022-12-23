@@ -202,28 +202,24 @@ function contour_to_grid(
     return grid
 end
 
-function data_region(region_name::Symbol; border::Float32 = 0.25f0,)
+function data_region(region_name::Symbol)
 	"""
 	Work out what rectangular region of data we need to cut out to cover
-	the domain covered by the map. Add an extra border around this region
-	to prevent any edge anomalies.
+	the domain covered by the map.
 
 	Arguments:
 		region_name:	Symbol representing the region (:NZ etc)
-		border:			Border to put around the data.
 	"""
 	region_ds = mapproject(region = map_params(region_name)[:mapRegion],
 									proj = map_params(region_name)[:proj],
-									map_size="E",)
-	bltr = match(r"^-R([-\.\d]+)/([-\.\d]+)/([-\.\d]+)/([-\.\d]+)", region_ds.text[1])
-	bllon = parse(Float32, bltr[1]) - border
-	bllat = parse(Float32, bltr[2]) - border
-	trlon = parse(Float32, bltr[3]) + border
-	trlat = parse(Float32, bltr[4]) + border
-	bllat = max(-90, bllat)
-	trlat = min(90, trlat)
-	wesn = (bllon, trlon, bllat, trlat)
-	return(wesn)
+									map_size="r",)
+	west = floor(region_ds.data[1])
+	east = ceil(region_ds.data[2])
+	south = floor(region_ds.data[3])
+	north = ceil(region_ds.data[4])
+	south = max(-90, south)
+	north = min(90, north)
+	return (west, east, south, north)
 end
 
 function map_params(region_name::Symbol)
@@ -272,7 +268,7 @@ function map_params(region_name::Symbol)
         :UK => Dict(
             :proj => (name = :conicEquidistant, center = [0, 50], parallels = [45, 55]),
             :mapRegion => "-30/40/15/65+r",
-            :frame => (axes = :wsen, ticks = 360, grid = 360),
+            :frame => (axes = :WSen, ticks = 1, grid = 10, annot = 10),
         ),
         :WORLD => Dict(
             :proj => (name = :Robinson, center = 175),

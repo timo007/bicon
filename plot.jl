@@ -10,7 +10,7 @@ using Printf
 
 
 function make_plot(
-    mslp_grid,
+    grid,
     header::ContourHeader,
     region,
     contint::Union{Number,String},
@@ -38,7 +38,7 @@ function make_plot(
     )
 
     if !isfile(contint)
-        cpt = grd2cpt(mslp_grid, cmap = cpt, bg = :i, continuous = true, nlevels = true)
+        cpt = grd2cpt(grid, cmap = cpt, bg = :i, continuous = true, nlevels = true)
         annotint = parse(Float32, contint) * 2
     else
         annotint = Float32(4)
@@ -48,7 +48,7 @@ function make_plot(
     # Plot the data on a map.
     #
     grdimage(
-        mslp_grid,
+        grid,
         color = cpt,
         proj = map_params(region)[:proj],
         region = map_params(region)[:mapRegion],
@@ -63,7 +63,7 @@ function make_plot(
     )
     coast!(area = (0, 0, 1), shore = "thinnest,brown")
     grdcontour!(
-        mslp_grid,
+        grid,
         annot = (int = annotint, labels = (font = (8, "AvantGarde-Book"),)),
         cont = contint,
         pen = "thin, black",
@@ -82,7 +82,7 @@ function parse_commandline()
         default = "http://nomuka.com/data/mslp_NZ_t025c200_2022121818_000.bin"
         "--cnt"
         help = "Contour spacing"
-        default = 2
+        default = "2"
         "--cpt"
         help = "Colour palette"
         default = "batlow"
@@ -128,23 +128,23 @@ function main()
     #
     # Read the contours from the file.
     #
-    mslp, mslp_header = bin_to_contour(infile)
+    grid, header = bin_to_contour(infile)
 
     #
     # Grid the MSLP.
     #
-    mslp_grid = contour_to_grid(
-        mslp,
+    grid = contour_to_grid(
+        grid,
         parsed_args["inc"],
-        (mslp_header.west, mslp_header.east, mslp_header.south, mslp_header.north),
+        (header.west, header.east, header.south, header.north),
     )
 
     #
     # Make the plot.
     #
     make_plot(
-        mslp_grid,
-        mslp_header::ContourHeader,
+				  grid,
+				  header::ContourHeader,
         reg,
         parsed_args["cnt"],
         parsed_args["cpt"],

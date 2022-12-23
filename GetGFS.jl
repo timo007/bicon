@@ -199,6 +199,7 @@ function main()
 			else
 			  grid = gmtread(file, grid = true, region = map_region)
 		  end
+		  gmtwrite(file*".new", grid)
         header = ContourHeader(
             GRIBparam[1],
             GRIBparam[2],
