@@ -192,6 +192,8 @@ function main()
 
 		  map_region = data_region(reg)
 		  if map_region[1] < 0 || map_region[2] > 359.75
+			  # Deal with regions which cross the east/west border of the global
+			  # NWP data (e.g. :UK).
 			  grid = grdsample(file, inc=(0.25, 0.25), region=(0, 360, -90, 90),
 									 interp = (nearneighbor = true), f="ig")
 			  grid = grdedit(grid, region = (-180, 180, -90, 90), wrap = true)
@@ -199,7 +201,7 @@ function main()
 			else
 			  grid = gmtread(file, grid = true, region = map_region)
 		  end
-		  gmtwrite(file*".new", grid)
+
         header = ContourHeader(
             GRIBparam[1],
             GRIBparam[2],
