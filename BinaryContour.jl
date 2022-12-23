@@ -221,10 +221,8 @@ function data_region(region_name::Symbol; border::Float32 = 0.25f0,)
 	trlon = parse(Float32, bltr[3]) + border
 	trlat = parse(Float32, bltr[4]) + border
 	bllat = max(-90, bllat)
-	bllon = max(0, bllon)
 	trlat = min(90, trlat)
-	trlon = min(360, trlon)
-	wesn = (min(bllon, trlon), max(bllon, trlon), min(bllat, trlat), max(bllat, trlat))
+	wesn = (bllon, trlon, bllat, trlat)
 	return(wesn)
 end
 

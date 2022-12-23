@@ -190,8 +190,15 @@ function main()
         GRIBparam = NCEPvar_to_GRIBparam(parsed_args["v"])
         fcst = match(r"^.*_(\d{3}).nc", file)[1]
 
-		  grid = gmtread(file, grid = true, region = data_region(reg,))
-		  gmtwrite(file*".new", grid)
+		  map_region = data_region(reg)
+		  if map_region[1] < 0 || map_region[2] > 359.75
+			  grid = grdsample(file, inc=(0.25, 0.25), region=(0, 360, -90, 90),
+									 interp = (nearneighbor = true), f="ig")
+			  grid = grdedit(grid, region = (-180, 180, -90, 90), wrap = true)
+			  grid = grdcut(grid, region = map_region)
+			else
+			  grid = gmtread(file, grid = true, region = map_region)
+		  end
         header = ContourHeader(
             GRIBparam[1],
             GRIBparam[2],
