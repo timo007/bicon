@@ -112,6 +112,7 @@ function main()
     #
     if isfile(parsed_args["i"])
         infile = parsed_args["i"]
+        println(@sprintf("Local file %s: %d bytes", parsed_args["i"], filesize(infile)))
     else
         try
             Downloads.download(parsed_args["i"], "./data.bin")

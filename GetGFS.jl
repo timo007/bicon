@@ -12,7 +12,7 @@ using Printf
 
 export opendap_to_gmt, download_var
 
-function download_var(url::String, var::String, level::Float32 = NaN32)
+function download_var(url::String, var::String; level::Float32 = NaN32)
     # Collect the data from NCEP's OpenDAP server.
     ds = NCDataset(url, "r")
 
@@ -41,12 +41,17 @@ function download_var(url::String, var::String, level::Float32 = NaN32)
         basetime_str = Dates.format(basetime, "yyyymmddHH")
         lead_time = Dates.value(valtime[t] - basetime) / 3600000 # ms to hours.
         GRIBparam = NCEPvar_to_GRIBparam(var)
+		  if isnan(level)
+			  vlevstr = GRIBparam[4]
+		  else
+			  vlevstr = @sprintf("%dPa", round(level*100))
+		  end
         outfile = @sprintf(
             "GFS_%03d-%03d-%03d_%s_%s_%03d.nc",
             GRIBparam[1],
             GRIBparam[2],
             GRIBparam[3],
-            strip(GRIBparam[4], ' '),
+            strip(vlevstr, ' '),
             basetime_str,
             lead_time
         )
@@ -140,8 +145,8 @@ function parse_commandline()
         default = "prmslmsl"
         "-p"
         help = "Vertical level (when required)"
-        arg_type = String
-        default = repeat(' ', 8)
+        arg_type = Float32
+        default = NaN32
         "-s"
         help = "Scale factor (when required)"
         arg_type = Float32
@@ -178,7 +183,7 @@ function main()
         parsed_args["t"][9:10],
         "z",
     )
-    file_list = download_var(ncep_url, parsed_args["v"])
+	 file_list = download_var(ncep_url, parsed_args["v"], level = parsed_args["p"])
 
     #
     # Process the files listed on the command line
@@ -188,6 +193,11 @@ function main()
         # file name.
         cntfile = replace(file, "GFS" => "GFS_" * parsed_args["reg"], ".nc" => ".bin")
         GRIBparam = NCEPvar_to_GRIBparam(parsed_args["v"])
+		  if isnan(parsed_args["p"])
+			  vlevstr = GRIBparam[4]
+		  else
+			  vlevstr = @sprintf("%dPa", round(parsed_args["p"]*100))
+		  end
         fcst = match(r"^.*_(\d{3}).nc", file)[1]
 
 		  map_region = data_region(reg)
@@ -208,7 +218,7 @@ function main()
             GRIBparam[3],
             datetime2unix(DateTime(parsed_args["t"], dateformat"yyyymmddHH")),
             parse(Float32, fcst),
-            lpad(GRIBparam[4], 8, ' '),
+            lpad(vlevstr, 8, ' '),
 				data_region(reg,)[1],
             data_region(reg,)[2],
             data_region(reg,)[3],
