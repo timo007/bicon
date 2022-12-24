@@ -33,7 +33,7 @@ function contour_to_bin(
     contour::Vector{GMTdataset{Float64,2}},
     header::ContourHeader,
     outfile::String;
-    zval::Float32 = 1,
+    zval::Number = 1,
 )
     """
     Convert contours (in GMT data sets) to binary encoded contours.
