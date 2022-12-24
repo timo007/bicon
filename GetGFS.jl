@@ -12,23 +12,34 @@ using Printf
 
 export opendap_to_gmt, download_var
 
-function download_var(url::String, var::String; level::Float32 = NaN32)
-    # Collect the data from NCEP's OpenDAP server.
+function download_var(url::String, var::String; level::Number = NaN)
+	 """
+	 Collect data from NCEP's OpenDAP server.
+
+	 Arguments:
+ 		url:		The URL of the dataset containing the data to collect.
+		var:		The name of teh variable to collect.
+		level:	The pressure level to collect (not required for 2D fields).
+
+	 Returns:
+	 	Writes the downloaded data to files on the local computer, and returns
+		a list of these file names.
+	 """
     ds = NCDataset(url, "r")
 
     lon = ds["lon"][:]
     lat = ds["lat"][:]
     basetime = ds["time"][1]
-    valtime = ds["time"][2:41]
+    valtime = ds["time"][9:8:41]
 
     if (!isnan(level))
         # Extract a slice of 3D data (e.g. a level from pressure level data)
         lev = ds["lev"][:]
         lev_idx = findall(x -> x ≈ level, lev)[1]
-        data = ds[var][:, :, lev_idx, 2:41]
+        data = ds[var][:, :, lev_idx, 9:8:41]
     else
         # 2D data (e.g. surface fields)
-        data = ds[var][:, :, 2:41]
+        data = ds[var][:, :, 9:8:41]
     end
 
     close(ds)
