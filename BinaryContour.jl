@@ -199,6 +199,7 @@ function contour_to_grid(
     println("Converting contours to grid")
     mean_contour = blockmean(contour, inc = inc, region = region, center = true)
     grid = surface(mean_contour, inc = inc, region = region, tension = 0, A = "m")
+	 #grid = sphinterpolate(mean_contour, inc = inc, region = region, tension = :g)
     return grid
 end
 
@@ -265,39 +266,44 @@ function map_params(region_name::Symbol)
             :mapRegion => "80/-50/165/-3+r",
             :frame => (axes = :WSen, ticks = 2, grid = 10, annot = 10),
         ),
-        :UK => Dict(
-            :proj => (name = :conicEquidistant, center = [0, 50], parallels = [45, 55]),
-            :mapRegion => "-30/40/15/65+r",
-            :frame => (axes = :WSen, ticks = 1, grid = 10, annot = 10),
-        ),
-        :WORLD => Dict(
-            :proj => (name = :Robinson, center = 175),
-            :mapRegion => "0/360/-90/90",
-            :frame => (axes = :wsen, ticks = 360, grid = 360),
-        ),
-    )
-    return proj[region_name]
-end
+		  :ANT => Dict( # Antarctica. Warning: problems at the poles are common.
+							:proj => (name = :Stereographic, center = [180, -90]),
+							:mapRegion => "0/360/-90/-60",
+							:frame => (axes = :WSen, ticks = 10, grid = 30, annot = 60),
+						  ),
+		  :UK => Dict(
+						  :proj => (name = :conicEquidistant, center = [0, 50], parallels = [45, 55]),
+						  :mapRegion => "-30/40/15/65+r",
+						  :frame => (axes = :WSen, ticks = 1, grid = 10, annot = 10),
+						 ),
+		  :WORLD => Dict(
+							  :proj => (name = :Robinson, center = 175),
+							  :mapRegion => "0/360/-90/90",
+							  :frame => (axes = :wsen, ticks = 360, grid = 360),
+							 ),
+		 )
+	 return proj[region_name]
+ end
 
-function NCEPvar_to_GRIBparam(ncep_var::String)
-    """"
-    Convert NCEP parameter names to a tuple: (discipline, category, parameter, level)
-    as used in GRIB-2. This table needs serious work to be a bit more complete.
-    """
-    ncep_table = Dict(
-        "tmax2m" => (0, 0, 4, "2m"),
-        "tmin2m" => (0, 0, 5, "2m"),
-        "tmpsfc" => (0, 0, 0, "Surface"),
-        "tmp2m" => (0, 0, 0, "2m"),
-		  "tmpprs" => (0, 0, 0, "Pressure"),
-        "rh2m" => (0, 1, 1, "2m"),
-        "apcpsfc" => (0, 1, 8, "Surface"),
-		  "prateavesfc" => (0, 1, 52, "Surface"),
-        "gustsfc" => (0, 2, 22, "Surface"),
-        "prmslmsl" => (0, 3, 1, "MSL"),
-		  "hgtprs" => (0, 3, 5, "Pressure"),
-        "tozneclm" => (0, 14, 0, "Atmos"),
-    )
+ function NCEPvar_to_GRIBparam(ncep_var::String)
+	 """"
+	 Convert NCEP parameter names to a tuple: (discipline, category, parameter, level)
+	 as used in GRIB-2. This table needs serious work to be a bit more complete.
+	 """
+	 ncep_table = Dict(
+							 "tmax2m" => (0, 0, 4, "2m"),
+							 "tmin2m" => (0, 0, 5, "2m"),
+							 "tmpsfc" => (0, 0, 0, "Surface"),
+							 "tmp2m" => (0, 0, 0, "2m"),
+							 "tmpprs" => (0, 0, 0, "Pressure"),
+							 "rh2m" => (0, 1, 1, "2m"),
+							 "apcpsfc" => (0, 1, 8, "Surface"),
+							 "prateavesfc" => (0, 1, 52, "Surface"),
+							 "gustsfc" => (0, 2, 22, "Surface"),
+							 "prmslmsl" => (0, 3, 1, "MSL"),
+							 "hgtprs" => (0, 3, 5, "Pressure"),
+							 "tozneclm" => (0, 14, 0, "Atmos"),
+							)
 
     if haskey(ncep_table, ncep_var)
         GRIB_var = ncep_table[ncep_var]
