@@ -214,9 +214,7 @@ function main()
 		  if map_region[1] < 0 || map_region[2] > 359.75
 			  # Deal with regions which cross the east/west border of the global
 			  # NWP data (e.g. :UK).
-			  grid = grdsample(file, inc=(0.25, 0.25), region=(0, 360, -90, 90),
-									 interp = (nearneighbor = true), f="ig")
-			  grid = grdedit(grid, region = (-180, 180, -90, 90), wrap = true)
+			  grid = grdedit(file, region = (-180, 180, -90, 90), wrap = true, f="ig")
 			  grid = grdcut(grid, region = map_region)
 			else
 			  grid = gmtread(file, grid = true, region = map_region)
