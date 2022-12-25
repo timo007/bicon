@@ -68,11 +68,10 @@ function download_var(url::String, var::String; level::Number = NaN)
         )
         push!(file_list, outfile)
 
-        data_grid = mat2grid(
-            permutedims(nomissing(data[:, :, t], NaN), (2, 1)),
-            x = lon[:],
-            y = lat[:],
-        )
+		  data_grid = permutedims(nomissing(data[:, :, t], NaN), (2, 1))
+		  data_grid = hcat(data_grid, data_grid[:,1])
+
+		  data_grid = mat2grid(data_grid, x = vcat(lon, 360), y = lat,)
         println("Writing ", outfile)
         gmtwrite(outfile, data_grid)
     end
