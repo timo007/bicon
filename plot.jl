@@ -15,7 +15,8 @@ function make_plot(
     region,
     contint::Union{Number,String},
     cpt,
-    outfile,
+    outfile;
+	 contour = nothing,
 )
     valid_time = Dates.format(
         unix2datetime(header.base_time) + Dates.Hour(header.lead_time),
@@ -62,15 +63,19 @@ function make_plot(
         figsize = 20,
     )
     coast!(area = (0, 0, 1), shore = "thinnest,brown")
-    grdcontour!(
-        grid,
-        annot = (int = annotint, labels = (font = (8, "AvantGarde-Book"),)),
-        cont = contint,
-        pen = "thin, black",
-        labels = (dist = 4,),
-        savefig = outfile,
-        show = true,
-    )
+	 if isnothing(contour)
+		 grdcontour!(
+			  grid,
+			  annot = (int = annotint, labels = (font = (8, "AvantGarde-Book"),)),
+			  cont = contint,
+			  pen = "thin, black",
+			  labels = (dist = 4,),
+			  savefig = outfile,
+			  show = true,
+		 )
+	 else
+		 plot!(contour, pen = "thin, black", show = true,)
+	 end
 end
 
 function parse_commandline()
@@ -118,7 +123,7 @@ function main()
             Downloads.download(parsed_args["i"], "./data.bin")
         catch
             println("Unable to download the data file.")
-				exit()
+            exit()
         end
         println(
             @sprintf("Downloaded %s: %d bytes", parsed_args["i"], filesize("./data.bin"))
@@ -126,30 +131,60 @@ function main()
         infile = "./data.bin"
     end
 
-    #
-    # Read the contours from the file.
-    #
-    grid, header = bin_to_contour(infile)
+	 if occursin(r"^.*\.bin$", infile)
+		 #
+		 # Read the contours from the file, if the input is a contour file.
+		 #
+		 contour, header = bin_to_contour(infile)
 
-    #
-    # Grid the MSLP.
-    #
-    grid = contour_to_grid(
-        grid,
-        parsed_args["inc"],
-        (header.west, header.east, header.south, header.north),
-    )
+		 #
+		 # Grid the MSLP.
+		 #
+		 grid = contour_to_grid(
+			  contour,
+			  parsed_args["inc"],
+			  (header.west, header.east, header.south, header.north),
+		 )
+	 else
+		 #
+		 # Read data from a NetCDF file.
+		 #
+		  contour = nothing
+		  map_region = data_region(reg)
+		  if map_region[1] < 0 || map_region[2] > 359.75
+			  # Deal with regions which cross the east/west border of the global
+			  # NWP data (e.g. :UK).
+			  grid = grdedit(infile, region = (-180, 180, -90, 90), wrap = true, f="ig")
+			  grid = grdcut(grid, region = map_region)
+			else
+			  grid = gmtread(infile, grid = true, region = map_region)
+		  end
+		  fnparts = match(r"^GFS_(\d{3})-(\d{3})-(\d{3})_(.+)_(\d{10})_(\d{3}).*$", infile)
+        header = ContourHeader(
+				parse(UInt8, fnparts[1]),
+				parse(UInt8, fnparts[2]),
+				parse(UInt8, fnparts[3]),
+            datetime2unix(DateTime(fnparts[5], dateformat"yyyymmddHH")),
+				parse(Float32, fnparts[6]),
+				lpad(fnparts[4], 8, ' '),
+				data_region(reg,)[1],
+            data_region(reg,)[2],
+            data_region(reg,)[3],
+            data_region(reg,)[4],
+        )
+	  end
 
     #
     # Make the plot.
     #
     make_plot(
-				  grid,
-				  header::ContourHeader,
+        grid,
+        header::ContourHeader,
         reg,
         parsed_args["cnt"],
         parsed_args["cpt"],
         parsed_args["o"],
+		  contour = contour,
     )
 
 end
