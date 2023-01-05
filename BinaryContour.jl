@@ -245,7 +245,7 @@ function map_params(region_name::Symbol)
     proj = Dict(
         :NZ => Dict(
             :proj =>
-                (name = :lambertConic, center = [170, -40], parallels = [-35, -45]),
+                (name = :lambertConic, center = [170, -40], parallels = [-40, -10]),
             :mapRegion => "142/-52/-170/-28+r",
             :frame => (axes = :WSen, ticks = 1, grid = 10, annot = 10),
         ),
