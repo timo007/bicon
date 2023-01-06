@@ -74,7 +74,7 @@ function make_plot(
 			  show = true,
 		 )
 	 else
-		 plot!(contour, pen = "thin, black", show = true,)
+		 plot!(contour, pen = "thin, black", savefig = outfile, show = true,)
 	 end
 end
 
