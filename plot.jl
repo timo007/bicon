@@ -40,7 +40,7 @@ function make_plot(
 
     if !isfile(contint)
         cpt = grd2cpt(grid, cmap = cpt, bg = :i, continuous = true, nlevels = true)
-        annotint = parse(Float32, contint) * 2
+        annotint = parse(Float32, contint)
     else
         annotint = Float32(4)
     end
@@ -74,7 +74,11 @@ function make_plot(
 			  show = true,
 		 )
 	 else
-		 plot!(contour, pen = "thin, black", savefig = outfile, show = true,)
+		 plot!(contour, pen = "thin, black", 
+				 decorated = (quoted = true, n_labels = 1, label = :header,
+								  font = (8, "AvantGarde-Book"), n_data = 4,
+								  ),
+				 savefig = outfile, show = true,)
 	 end
 end
 
