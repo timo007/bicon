@@ -208,10 +208,10 @@ function main()
             datetime2unix(DateTime(fnparts[5], dateformat"yyyymmddHH")),
             parse(Float32, fnparts[6]),
             lpad(fnparts[4], 8, ' '),
-            data_region(reg)[1],
-            data_region(reg)[2],
-            data_region(reg)[3],
-            data_region(reg)[4],
+            map_region[1],
+            map_region[2],
+            map_region[3],
+            map_region[4],
         )
     end
 
@@ -226,8 +226,8 @@ function main()
         parsed_args["cpt"],
         parsed_args["o"],
         contour = contour,
-        incl_title = false,
-        incl_annot = false,
+        incl_title = true,
+        incl_annot = true,
     )
 
 end
