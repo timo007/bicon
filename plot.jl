@@ -48,7 +48,7 @@ function make_plot(
         cpt = grd2cpt(grid, cmap = cpt, bg = :i, continuous = true, nlevels = true)
         annotint = parse(Float32, contint) * 2
     else
-        annotint = Float32(4)
+        annotint = Float32(400)
     end
 
     #
@@ -110,7 +110,7 @@ function make_plot(
             plot!(contour, pen = "thin, black")
             colorbar!(
                 pos = (anchor = :BC, offset = (0, 1), size = (16, 0.5)),
-                frame = (annot = annotint, ylabel = gmtunit),
+                frame = (annot = annotint, ylabel = gmtunit,),
                 par = (FONT_ANNOT = "12,AvantGarde-Book,black",),
                 savefig = outfile,
                 show = true,
@@ -227,7 +227,7 @@ function main()
         parsed_args["o"],
         contour = contour,
         incl_title = true,
-        incl_annot = true,
+        incl_annot = false,
     )
 
 end
