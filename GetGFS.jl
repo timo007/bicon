@@ -13,18 +13,18 @@ using Printf
 export opendap_to_gmt, download_var
 
 function download_var(url::String, var::String; level::Number = NaN)
-	 """
-	 Collect data from NCEP's OpenDAP server.
+    """
+    Collect data from NCEP's OpenDAP server.
 
-	 Arguments:
- 		url:		The URL of the dataset containing the data to collect.
-		var:		The name of teh variable to collect.
-		level:	The pressure level to collect (not required for 2D fields).
+    Arguments:
+    	url:		The URL of the dataset containing the data to collect.
+    var:		The name of teh variable to collect.
+    level:	The pressure level to collect (not required for 2D fields).
 
-	 Returns:
-	 	Writes the downloaded data to files on the local computer, and returns
-		a list of these file names.
-	 """
+    Returns:
+    	Writes the downloaded data to files on the local computer, and returns
+    a list of these file names.
+    """
     ds = NCDataset(url, "r")
 
     lon = ds["lon"][:]
@@ -52,11 +52,11 @@ function download_var(url::String, var::String; level::Number = NaN)
         basetime_str = Dates.format(basetime, "yyyymmddHH")
         lead_time = Dates.value(valtime[t] - basetime) / 3600000 # ms to hours.
         GRIBparam = NCEPvar_to_GRIBparam(var)
-		  if isnan(level)
-			  vlevstr = GRIBparam[4]
-		  else
-			  vlevstr = @sprintf("%dPa", round(level*100))
-		  end
+        if isnan(level)
+            vlevstr = GRIBparam[4]
+        else
+            vlevstr = @sprintf("%dPa", round(level * 100))
+        end
         outfile = @sprintf(
             "GFS_%03d-%03d-%03d_%s_%s_%03d.nc",
             GRIBparam[1],
@@ -68,10 +68,10 @@ function download_var(url::String, var::String; level::Number = NaN)
         )
         push!(file_list, outfile)
 
-		  data_grid = permutedims(nomissing(data[:, :, t], NaN), (2, 1))
-		  data_grid = hcat(data_grid, data_grid[:,1])
+        data_grid = permutedims(nomissing(data[:, :, t], NaN), (2, 1))
+        data_grid = hcat(data_grid, data_grid[:, 1])
 
-		  data_grid = mat2grid(data_grid, x = vcat(lon, 360), y = lat,)
+        data_grid = mat2grid(data_grid, x = vcat(lon, 360), y = lat)
         println("Writing ", outfile)
         gmtwrite(outfile, data_grid)
     end
@@ -193,7 +193,7 @@ function main()
         parsed_args["t"][9:10],
         "z",
     )
-	 file_list = download_var(ncep_url, parsed_args["v"], level = parsed_args["p"])
+    file_list = download_var(ncep_url, parsed_args["v"], level = parsed_args["p"])
 
     #
     # Process the files listed on the command line
@@ -203,22 +203,22 @@ function main()
         # file name.
         cntfile = replace(file, "GFS" => "GFS_" * parsed_args["reg"], ".nc" => ".bin")
         GRIBparam = NCEPvar_to_GRIBparam(parsed_args["v"])
-		  if isnan(parsed_args["p"])
-			  vlevstr = GRIBparam[4]
-		  else
-			  vlevstr = @sprintf("%dPa", round(parsed_args["p"]*100))
-		  end
+        if isnan(parsed_args["p"])
+            vlevstr = GRIBparam[4]
+        else
+            vlevstr = @sprintf("%dPa", round(parsed_args["p"] * 100))
+        end
         fcst = match(r"^.*_(\d{3}).nc", file)[1]
 
-		  map_region = data_region(reg)
-		  if map_region[1] < 0 || map_region[2] > 359.75
-			  # Deal with regions which cross the east/west border of the global
-			  # NWP data (e.g. :UK).
-			  grid = grdedit(file, region = (-180, 180, -90, 90), wrap = true, f="ig")
-			  grid = grdcut(grid, region = map_region)
-			else
-			  grid = gmtread(file, grid = true, region = map_region)
-		  end
+        map_region = data_region(reg)
+        if map_region[1] < 0 || map_region[2] > 359.75
+            # Deal with regions which cross the east/west border of the global
+            # NWP data (e.g. :UK).
+            grid = grdedit(file, region = (-180, 180, -90, 90), wrap = true, f = "ig")
+            grid = grdcut(grid, region = map_region)
+        else
+            grid = gmtread(file, grid = true, region = map_region)
+        end
 
         header = ContourHeader(
             GRIBparam[1],
@@ -227,10 +227,10 @@ function main()
             datetime2unix(DateTime(parsed_args["t"], dateformat"yyyymmddHH")),
             parse(Float32, fcst),
             lpad(vlevstr, 8, ' '),
-				data_region(reg,)[1],
-            data_region(reg,)[2],
-            data_region(reg,)[3],
-            data_region(reg,)[4],
+            data_region(reg)[1],
+            data_region(reg)[2],
+            data_region(reg)[3],
+            data_region(reg)[4],
         )
         println("Contouring ", cntfile)
         grid = grid * parsed_args["s"]

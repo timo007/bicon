@@ -110,7 +110,7 @@ function make_plot(
             plot!(contour, pen = "thin, black")
             colorbar!(
                 pos = (anchor = :BC, offset = (0, 1), size = (16, 0.5)),
-                frame = (annot = annotint, ylabel = gmtunit,),
+                frame = (annot = annotint, ylabel = gmtunit),
                 par = (FONT_ANNOT = "12,AvantGarde-Book,black",),
                 savefig = outfile,
                 show = true,
@@ -227,7 +227,7 @@ function main()
         parsed_args["o"],
         contour = contour,
         incl_title = true,
-        incl_annot = false,
+        incl_annot = true,
     )
 
 end
