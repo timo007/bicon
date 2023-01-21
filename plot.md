@@ -21,4 +21,21 @@ Check what this actually does.
 When converting the contours to a grid, use this increment for the grid spacing. Format:
 loninc/latinc, where loninc is the longitudinal grid spacing in degrees, and latinc is
 the latitudinal grid spacing. Append an "m" to loninc and latinc if the grid spacings
-are in arc-minutes. The default is "15m/15m" (0.25°/0.25°).
+are in arc-minutes. The default is "15m/15m" (0.25°/0.25°). It makes sense to set
+loninc and latinc to the same values as used by the raw data which the contours were
+derived from.
+
+## -o outfile
+Write the final plot to outfile. The format of the file will be determined by
+the suffix of outfile. The format must
+be one supported by the GMT
+[psconvert](https://docs.generic-mapping-tools.org/dev/psconvert.html) command:
+
+- BMP
+- EPS
+- JPEG
+- PDF
+- PNG
+- PPM
+- SVG
+- TIFF
