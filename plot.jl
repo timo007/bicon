@@ -69,7 +69,7 @@ function make_plot(
         ),
         figsize = 20,
     )
-    coast!(area = (0, 0, 1), shore = "thinnest,brown")
+    coast!(area = (0, 0, 1), shore = "thinnest,purple")
     if isnothing(contour)
         if incl_annot
             grdcontour!(
