@@ -172,48 +172,19 @@ function main()
         infile = "./data.bin"
     end
 
-    if occursin(r"^.*\.bin$", infile)
-        #
-        # Read the contours from the file, if the input is a contour file.
-        #
-        contour, header = bin_to_contour(infile)
+	  #
+	  # Read the contours from the file, if the input is a contour file.
+	  #
+	  contour, header = bin_to_contour(infile)
 
-        #
-        # Grid the MSLP.
-        #
-        grid = contour_to_grid(
-            contour,
-            parsed_args["inc"],
-            (header.west, header.east, header.south, header.north),
-        )
-    else
-        #
-        # Read data from a NetCDF file.
-        #
-        contour = nothing
-        map_region = data_region(reg)
-        if map_region[1] < 0 || map_region[2] > 359.75
-            # Deal with regions which cross the east/west border of the global
-            # NWP data (e.g. :UK).
-            grid = grdedit(infile, region = (-180, 180, -90, 90), wrap = true, f = "ig")
-            grid = grdcut(grid, region = map_region)
-        else
-            grid = gmtread(infile, grid = true, region = map_region)
-        end
-        fnparts = match(r"^GFS_(\d{3})-(\d{3})-(\d{3})_(.+)_(\d{10})_(\d{3}).*$", infile)
-        header = ContourHeader(
-            parse(UInt8, fnparts[1]),
-            parse(UInt8, fnparts[2]),
-            parse(UInt8, fnparts[3]),
-            datetime2unix(DateTime(fnparts[5], dateformat"yyyymmddHH")),
-            parse(Float32, fnparts[6]),
-            lpad(fnparts[4], 8, ' '),
-            map_region[1],
-            map_region[2],
-            map_region[3],
-            map_region[4],
-        )
-    end
+	  #
+	  # Grid the MSLP.
+	  #
+	  grid = contour_to_grid(
+			contour,
+			parsed_args["inc"],
+			(header.west, header.east, header.south, header.north),
+	  )
 
     #
     # Make the plot.
