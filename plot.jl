@@ -11,14 +11,12 @@ using Printf
 
 function make_plot(
     grid,
+    contour,
     header::ContourHeader,
     region,
     contint::Union{Number,String},
     cpt,
     outfile;
-    contour = nothing,
-    incl_title = true,
-    incl_annot = true,
 )
     valid_time = Dates.format(
         unix2datetime(header.base_time) + Dates.Hour(header.lead_time),
@@ -31,18 +29,14 @@ function make_plot(
     end
     var, unit = GRIBparam(header.discipline, header.category, header.parameter)
     gmtunit = replace(unit, r"([-\d]+)" => s"@+\1@+", "_" => " ")
-    if incl_title
-        title = @sprintf(
-            "\"%s %s (%s)\\072 %s valid at %s\"",
-            strip(header.level, ' '),
-            lowercasefirst(var),
-            gmtunit,
-            fcst_type,
-            valid_time
-        )
-    else
-        title = ""
-    end
+	  title = @sprintf(
+			"\"%s %s (%s)\\072 %s valid at %s\"",
+			strip(header.level, ' '),
+			lowercasefirst(var),
+			gmtunit,
+			fcst_type,
+			valid_time
+	  )
 
     if !isfile(contint)
         cpt = grd2cpt(grid, cmap = cpt, bg = :i, continuous = true, nlevels = true)
@@ -70,53 +64,19 @@ function make_plot(
         figsize = 20,
     )
     coast!(area = (0, 0, 1), shore = "thinnest,purple")
-    if isnothing(contour)
-        if incl_annot
-            grdcontour!(
-                grid,
-                annot = (int = annotint, labels = (font = (8, "AvantGarde-Book"),)),
-                cont = contint,
-                pen = "thin, black",
-                labels = (dist = 4,),
-                savefig = outfile,
-                show = true,
-            )
-        else
-            grdcontour!(grid, cont = contint, pen = "thin, black")
-            colorbar!(
-                pos = (anchor = :BC, offset = (0, 1), size = (16, 0.5)),
-                frame = (annot = annotint, ylabel = gmtunit),
-                par = (FONT_ANNOT = "12,AvantGarde-Book,black",),
-                savefig = outfile,
-                show = true,
-            )
-        end
-    else
-        if incl_annot
-            plot!(
-                contour,
-                pen = "thin, black",
-                decorated = (
-                    quoted = true,
-                    n_labels = 1,
-                    label = :header,
-                    font = (8, "AvantGarde-Book"),
-                    n_data = 4,
-                ),
-                savefig = outfile,
-                show = true,
-            )
-        else
-            plot!(contour, pen = "thin, black")
-            colorbar!(
-                pos = (anchor = :BC, offset = (0, 1), size = (16, 0.5)),
-                frame = (annot = annotint, ylabel = gmtunit),
-                par = (FONT_ANNOT = "12,AvantGarde-Book,black",),
-                savefig = outfile,
-                show = true,
-            )
-        end
-    end
+		plot!(
+			 contour,
+			 pen = "thin, black",
+			 decorated = (
+				  quoted = true,
+				  n_labels = 1,
+				  label = :header,
+				  font = (8, "AvantGarde-Book"),
+				  n_data = 4,
+			 ),
+			 savefig = outfile,
+			 show = true,
+		)
 end
 
 function parse_commandline()
@@ -191,14 +151,12 @@ function main()
     #
     make_plot(
         grid,
+        contour,
         header::ContourHeader,
         reg,
         parsed_args["cnt"],
         parsed_args["cpt"],
         parsed_args["o"],
-        contour = contour,
-        incl_title = true,
-        incl_annot = true,
     )
 
 end

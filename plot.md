@@ -1,8 +1,8 @@
 # Plotting BinCon data
 
 ```
-Usage: plot.jl -i data [--cpt palette] [--inc increment] [--reg region] [--cnt contour]
-[-o outfile] [-h]
+Usage: plot.jl -i data [--cpt palette] [--inc increment] [--reg region]
+    [--cnt contour] [-o outfile] [-h]
 ```
 
 ## -i data
@@ -15,13 +15,13 @@ name of a file containing a custom colour palette. The default is the pre-define
 batlow colour palette.
 
 ## --cnt contour
-Check what this actually does.
+This option might be redundant. Look into it.
 
 ## --inc increment
 When converting the contours to a grid, use this increment for the grid spacing. Format:
 loninc/latinc, where loninc is the longitudinal grid spacing in degrees, and latinc is
 the latitudinal grid spacing. Append an "m" to loninc and latinc if the grid spacings
-are in arc-minutes. The default is "15m/15m" (0.25°/0.25°). It makes sense to set
+are in arc-minutes. The default is 15m/15m (0.25°/0.25°). It makes sense to set
 loninc and latinc to the same values as used by the raw data which the contours were
 derived from.
 
