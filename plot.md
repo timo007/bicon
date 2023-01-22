@@ -27,7 +27,8 @@ used by the raw data which the contours were derived from.
 
 ### --reg region
 region is the region to plot the map for. The regions are defined
-[here](./regions.md)
+[here](./regions.md). Note, if the data file does not contain data for the
+specified region, then of course no data will be shown in the plot.
 
 ### -o outfile
 Write the final plot to outfile. The format of the file will be determined by
@@ -49,11 +50,11 @@ the suffix of outfile. The format must be one supported by the GMT
 julia plot.jl -i https://github.com/timo007/bincon/blob/main/test_data/GFS_NZ_000-003-001_MSL_2023010412_024.bin?raw=true -o example.pdf
 ```
 This downloads and plots the example dataset stored on GitHub, and saves the
-plot to example.pdf.
+plot to example.pdf. The default region (:NZ) is used.
 
 
 ```
-julia plot.jl -i data.bin --cpt turbo -o localdata.png
+julia plot.jl -i data.bin --cpt turbo --reg SWP -o localdata.png
 ```
 This plots the local data file, data.bin, using the GMT "turbo" colour palette and
-saving the plot to localdata.png.
+saving the plot to localdata.png. The Southwest Pacific (SWP) region is used.
