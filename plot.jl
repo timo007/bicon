@@ -75,7 +75,7 @@ function parse_commandline()
         "-i"
         arg_type = AbstractString
         help = "Name or URL of the data file"
-        default = "http://nomuka.com/data/mslp_NZ_t025c200_2022121818_000.bin"
+        default = "https://github.com/timo007/bincon/blob/main/test_data/GFS_NZ_000-003-001_MSL_2023010412_024.bin?raw=true"
         "--cpt"
         help = "Colour palette"
         default = "batlow"
