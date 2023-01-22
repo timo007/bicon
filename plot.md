@@ -47,7 +47,8 @@ the suffix of outfile. The format must be one supported by the GMT
 ```
 julia plot.jl -i https://github.com/timo007/bincon/blob/main/test_data/GFS_NZ_000-003-001_MSL_2023010412_024.bin?raw=true -o example.pdf
 ```
-This plots the example dataset stored on GitHub, and saves the plot to example.pdf.
+This downloads and plots the example dataset stored on GitHub, and saves the
+plot to example.pdf.
 
 
 ```
