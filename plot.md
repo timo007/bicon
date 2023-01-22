@@ -26,7 +26,8 @@ and latinc if the grid spacings are in arc-minutes. The default is 15m/15m
 used by the raw data which the contours were derived from.
 
 ### --reg region
-region is the region to plot the map for. The following regions are defined:
+region is the region to plot the map for. The regions are defined
+[here](./regions.md)
 
 ### -o outfile
 Write the final plot to outfile. The format of the file will be determined by
