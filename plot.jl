@@ -9,15 +9,7 @@ using GMT
 using Printf
 
 
-function make_plot(
-    grid,
-    contour,
-    header::ContourHeader,
-    region,
-    contint::Union{Number,String},
-    cpt,
-    outfile;
-)
+function make_plot(grid, contour, header::ContourHeader, region, cpt, outfile;)
     valid_time = Dates.format(
         unix2datetime(header.base_time) + Dates.Hour(header.lead_time),
         "HH:MMZ e d u YYYY",
@@ -29,21 +21,19 @@ function make_plot(
     end
     var, unit = GRIBparam(header.discipline, header.category, header.parameter)
     gmtunit = replace(unit, r"([-\d]+)" => s"@+\1@+", "_" => " ")
-	  title = @sprintf(
-			"\"%s %s (%s)\\072 %s valid at %s\"",
-			strip(header.level, ' '),
-			lowercasefirst(var),
-			gmtunit,
-			fcst_type,
-			valid_time
-	  )
+    title = @sprintf(
+        "\"%s %s (%s)\\072 %s valid at %s\"",
+        strip(header.level, ' '),
+        lowercasefirst(var),
+        gmtunit,
+        fcst_type,
+        valid_time
+    )
 
-    if !isfile(contint)
-        cpt = grd2cpt(grid, cmap = cpt, bg = :i, continuous = true, nlevels = true)
-        annotint = parse(Float32, contint) * 2
-    else
-        annotint = Float32(400)
-    end
+    #
+    # Make the colour palette.
+    #
+    cpt = grd2cpt(grid, cmap = cpt, bg = :i, continuous = true, nlevels = true)
 
     #
     # Plot the data on a map.
@@ -64,19 +54,19 @@ function make_plot(
         figsize = 20,
     )
     coast!(area = (0, 0, 1), shore = "thinnest,purple")
-		plot!(
-			 contour,
-			 pen = "thin, black",
-			 decorated = (
-				  quoted = true,
-				  n_labels = 1,
-				  label = :header,
-				  font = (8, "AvantGarde-Book"),
-				  n_data = 4,
-			 ),
-			 savefig = outfile,
-			 show = true,
-		)
+    plot!(
+        contour,
+        pen = "thin, black",
+        decorated = (
+            quoted = true,
+            n_labels = 1,
+            label = :header,
+            font = (8, "AvantGarde-Book"),
+            n_data = 4,
+        ),
+        savefig = outfile,
+        show = true,
+    )
 end
 
 function parse_commandline()
@@ -86,9 +76,6 @@ function parse_commandline()
         arg_type = AbstractString
         help = "Name or URL of the data file"
         default = "http://nomuka.com/data/mslp_NZ_t025c200_2022121818_000.bin"
-        "--cnt"
-        help = "Contour spacing"
-        default = "2"
         "--cpt"
         help = "Colour palette"
         default = "batlow"
@@ -132,19 +119,19 @@ function main()
         infile = "./data.bin"
     end
 
-	  #
-	  # Read the contours from the file, if the input is a contour file.
-	  #
-	  contour, header = bin_to_contour(infile)
+    #
+    # Read the contours from the file, if the input is a contour file.
+    #
+    contour, header = bin_to_contour(infile)
 
-	  #
-	  # Grid the MSLP.
-	  #
-	  grid = contour_to_grid(
-			contour,
-			parsed_args["inc"],
-			(header.west, header.east, header.south, header.north),
-	  )
+    #
+    # Grid the MSLP.
+    #
+    grid = contour_to_grid(
+        contour,
+        parsed_args["inc"],
+        (header.west, header.east, header.south, header.north),
+    )
 
     #
     # Make the plot.
@@ -154,7 +141,6 @@ function main()
         contour,
         header::ContourHeader,
         reg,
-        parsed_args["cnt"],
         parsed_args["cpt"],
         parsed_args["o"],
     )
