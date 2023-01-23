@@ -17,12 +17,12 @@ function download_var(url::String, var::String; level::Number = NaN)
     Collect data from NCEP's OpenDAP server.
 
     Arguments:
-    	url:		The URL of the dataset containing the data to collect.
+    url:		The URL of the dataset containing the data to collect.
     var:		The name of teh variable to collect.
     level:	The pressure level to collect (not required for 2D fields).
 
     Returns:
-    	Writes the downloaded data to files on the local computer, and returns
+    Writes the downloaded data to files on the local computer, and returns
     a list of these file names.
     """
     ds = NCDataset(url, "r")
@@ -101,10 +101,10 @@ function opendap_to_gmt(
     var:		The variable to read (e.g. ugrdprs)
     south: 	The southern limit of the domain to read.
     north:	The northern limit of the domain to read.
-    west:		The western limit of the domain to read.
-    east:		The eastern limit of the domain to read.
+    west:	The western limit of the domain to read.
+    east:	The eastern limit of the domain to read.
     level:	The vertical level to read (e.g. 925 for 925 hPa). If ommitted, read a 2D field.
-    fcst:		The forecast lead time (in units of time since the the first/base time. e.g. 24)
+    fcst:	The forecast lead time (in units of time since the the first/base time. e.g. 24)
     """
     ds = NCDataset(url, "r")
 
@@ -157,10 +157,6 @@ function parse_commandline()
         help = "Vertical level (when required)"
         arg_type = Float32
         default = NaN32
-        "-s"
-        help = "Scale factor (when required)"
-        arg_type = Float32
-        default = Float32(1)
         "--tol"
         help = "Tolerance"
         arg_type = Float32
@@ -196,18 +192,19 @@ function main()
     file_list = download_var(ncep_url, parsed_args["v"], level = parsed_args["p"])
 
     #
-    # Process the files listed on the command line
+    # Compress the NetCDF files which have been downloaded.
     #
     for file in file_list
-        # Try and extract variable, base time and lead time from the 
-        # file name.
+		  # The name of the compressed file is derived from the NetCDF file.
         cntfile = replace(file, "GFS" => "GFS_" * parsed_args["reg"], ".nc" => ".bin")
+
         GRIBparam = NCEPvar_to_GRIBparam(parsed_args["v"])
         if isnan(parsed_args["p"])
             vlevstr = GRIBparam[4]
         else
             vlevstr = @sprintf("%dPa", round(parsed_args["p"] * 100))
         end
+        # Extract the lead time from the file name.
         fcst = match(r"^.*_(\d{3}).nc", file)[1]
 
         map_region = data_region(reg)
@@ -233,7 +230,6 @@ function main()
             data_region(reg)[4],
         )
         println("Contouring ", cntfile)
-        grid = grid * parsed_args["s"]
         grid_to_contour(grid, header, parsed_args["cnt"], parsed_args["tol"], cntfile)
 
     end
