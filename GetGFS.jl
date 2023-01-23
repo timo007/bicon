@@ -149,7 +149,6 @@ function parse_commandline()
     @add_arg_table! s begin
         "-t"
         help = "NWP base time (yyyymmddHH)"
-        default = "mslp.bin"
         "-v"
         help = "NCEP variable to collect"
         default = "prmslmsl"
@@ -163,7 +162,7 @@ function parse_commandline()
         default = Float32(0.25)
         "--cnt"
         help = "Contour interval"
-        default = 2
+        default = 200
         "--reg"
         help = "Region to plot"
         default = "NZ"
