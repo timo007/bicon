@@ -13,7 +13,7 @@ The most important file is [BinaryContour.jl](./BinaryContour.jl).
 
 Two example scripts are provided to demonstrate how to use BinCon.
 [GetGFS.jl](./GetGFS.jl) downloads recent NCEP GFS data and compresses it using
-BinCon. [plot.jl[(./plot.jl) plots compressed data files.
+BinCon. [plot.jl](./plot.jl) plots compressed data files.
 
 ## Documentation
 
