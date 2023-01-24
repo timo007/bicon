@@ -1,0 +1,526 @@
+\documentclass[12pt,a4paper]{article}
+
+\usepackage{natbib}
+\usepackage{graphicx}
+\usepackage{url}
+\usepackage{siunitx}
+\usepackage[margin=1.5cm]{geometry}
+\usepackage{lineno}
+\usepackage{parskip}
+\usepackage{setspace}
+\usepackage{fontspec}
+\usepackage{polyglossia}
+
+% The fakaʻua character (many fonts don't have it).
+\newcommand{\f}{{\fontspec{LibertinusSerif}ʻ}}
+
+\doublespacing
+
+\title{Contour-based compression of numerical weather prediction data}
+\author{Timothy Hume}
+
+\begin{document}
+
+\maketitle
+
+
+\linenumbers
+\begin{abstract}
+\begin{center}
+\includegraphics[width=6cm]{figures/abstract.pdf}
+\end{center}
+A contour-based compression method for numerical weather prediction data is
+described. Very high compression ratios of over fifty are achievable for some
+meteorological fields. Potential applications of the method include
+dissemination of weather forecast data to users with low bandwidth or expensive
+communication systems.
+\end{abstract}
+
+\section*{Introduction}
+\label{sec:introduction}
+
+Compression of meteorological data is becoming increasingly important. There
+has been an explosion in the volume of meteorological data collected and
+produced in recent years. For example, the European Centre for Medium-Range
+Weather Forecasts (ECMWF) has found that their data archives are increasing at
+such a rapid rate that storage is becoming expensive and
+difficult~\citep{burton_cruz2020}. Compression is one method, in conjunction
+with others, to help tackle this explosion of data.
+
+Compression is also used in applications where dissemination of data is limited
+by low bandwidth communication channels. With the development of faster and
+cheaper communications methods, this problem is not as acute as in the past.
+However, there are still users who are limited by slow or expensive
+communication.
+
+A contour-based compression method called Binary Contours (BinCon) is
+presented in this article. It achieves very high compression ratios when
+applied to numerical weather prediction (NWP) data. Rather than
+compressing grid point data, BinCon contours the meteorological fields
+and saves the contours as line segments in a compact binary format. Gridded
+fields can subsequently be recreated from these contours. Contour-based
+compression methods have previously been used for geospatial images, radar
+images, and weather maps. However, the focus has often been on image data
+rather than NWP data~\citep[see][]{scarmana2011,
+mahapatra_makkapati2005, gertz_grappel1994}
+
+One of the earliest contour-based compression methods predates the
+computer era. International Analysis Code (IAC~FLEET) is a standard
+World Meteorological Organization (WMO) alphanumeric code for encoding
+weather maps. It was adopted for use by the International Meteorological
+Organization in 1947~\citep[Resolution 156, p.~161]{imo1947}. It is used for
+marine applications where communications have historically been slow and
+expensive~\citep[pp.~87--90]{wmo2019a}. A typical IAC~FLEET message is
+between about one and three thousand characters in length. Examples of current
+IAC~FLEET analyses for the Southwest Pacific and North Atlantic,
+produced by the Fiji Meteorological Service (FMS) and National
+Oceanographic and Atmospheric Administration (NOAA) respectively, can
+be downloaded from the Internet~\citep{fms2023, noaa2023}. A decoded and
+plotted analysis is shown in Figure~\ref{fig:iacplot}.
+
+\begin{figure*}
+\centering
+\includegraphics[width=11.7cm]{figures/iacplot.pdf}
+\caption{\label{fig:iacplot}Isobars plotted from Fleet Code using
+OpenCPN~\citep{opencpn2023} The yellow lines are easterly wind troughs, and the
+orange line is a frontal system.}
+\end{figure*}
+
+Although IAC~FLEET is still an official code, it has low spatial resolution.
+With the advent of high-resolution Numerical Weather Prediction (NWP) models
+and faster communications methods, IAC~FLEET is rarely used.
+
+BinCon is inspired by IAC~FLEET. It enables high-resolution fields to be
+encoded into files of similar size to IAC~FLEET. Furthermore, any NWP field can
+be encoded, not just mean sea level pressure isobars. As an example,
+Figure~\ref{fig:BinCon} shows mean sea level pressure for the New Zealand
+region plotted from NCEP (National Centers for Environmental Prediction) GFS
+(Global Forecast System) \ang{0.25} spatial resolution data compressed using
+the BinCon method\footnote{The New Zealand region in this article refers to the
+region from \ang{142}\,E--\ang{164}\,W, \ang{54}\,S--\ang{27}\,S.}. The data file used to
+make this plot is just \SI{1845}{\byte} in size.
+
+\begin{figure*}
+\centering
+\includegraphics[width=11.7cm]{figures/example.pdf}
+\caption{\label{fig:BinCon}Mean sea level pressure forecast valid at
+1200\,UTC, 5 January 2023. Data are compressed using the BinCon
+method.}
+\end{figure*}
+
+\section*{Method}
+\label{sec:method}
+
+The BinCon method has three steps: contour the raw gridded data, simplify the
+contours, and convert the simplified contour locations to a binary format.
+These are described in the following section.
+
+\subsection*{Simplified contour maps}
+\label{sec:contouring}
+
+The first step of the compression process is to create a contour plot of the
+gridded data that needs compressing. For example, Figure~\ref{fig:nzmslp}\,(a)
+shows a contour plot of a mean sea level pressure forecast for the New Zealand
+region using data from the NCEP GFS model. The spatial resolution of the
+original gridded data is \ang{0.25}. The forecast has a lead time of
+\SI{24}{\hour}, and is valid at 1200\,UTC, 5 January 2023. These forecast data are
+used throughout this article.
+
+The appropriate contour spacing depends on the field being compressed. For
+smoothly varying fields such as mean sea level pressure, a rather coarse
+spacing may be adequate. For fields with large gradients, smaller spacings may
+be required to adequately resolve the field in areas where the gradient is
+large. There is no requirement for the contour spacing to be uniform. For
+example, wind speed isotachs might be closer together for low wind speeds than
+for higher wind speeds.
+
+At this stage, the contour maps can be quite detailed. For example, in
+Figure~\ref{fig:nzmslp}\,(a) numerous small wiggles are observed in the
+isobars. It is apparent that these could be simplified without losing much
+information of practical importance.
+
+To simplify the contours, the Ramer-Douglas-Peucker algorithm is
+used~\citep{ramer1972, douglas_peucker1973}. This algorithm operates by
+successively removing points from a complex polygonal line, provided the
+distance of the resulting line is no further away from the original line than a
+user specified tolerance. An interactive demonstration of the algorithm can be
+found in~\citet{karthaus2012}.
+
+Figures~\ref{fig:nzmslp}(b)--(d) show the effect of the tolerance setting on
+the simplified contours. When the tolerance is \ang{0.125}, the simplified
+contours are very close to the original contours. This is not surprising given
+the original grid spacing is \ang{0.25}, and a simplified contour falling
+within \ang{0.125} of the original contour is likely to be in the same grid
+box. As the tolerance increases, the simplified contours become cruder. The
+appropriate tolerance will depend on the use to which the data are intended.
+Larger tolerances produce smaller compressed file sizes.
+
+\begin{figure*}
+\centering
+\includegraphics[width=18cm]{figures/nzmslp.pdf}
+\caption{\label{fig:nzmslp}Mean sea level pressure forecast valid at
+1200\,UTC, 5 January 2023.}
+\end{figure*}
+
+\subsection*{Binary contour format}
+
+We now have a simplified contour map of the field we are processing. There are
+one or more contours, each comprised of one or more line segments. The line
+segments are defined by the geographical locations of their starting and ending
+points.
+
+The data are encoded into a header record, and one contour record for each
+discrete contour line on the map. The header record contains meta-data
+describing the meteorological field being encoded (see
+Table~\ref{tab:header_record}). The contour records contain the locations of
+the line segments making up the contours (see Table~\ref{tab:contour_record})
+\footnote{The data types in Tables~\ref{tab:header_record}~and~\ref{tab:contour_record}
+are: UInt8 and UInt16 are 8 and 16-bit unsigned integers; SInt8 are 8-bit
+signed integers; Float32 and Float64 are IEEE 32 and 64-bit floating-point
+numbers; Char is a one byte character.}.
+
+The procedure for encoding starts with the longitude and latitude
+of the first point in a contour, expressed as 32-bit IEEE floating-point
+numbers. The location of the next point is the starting point plus offsets in
+the longitude and latitude dimensions in multiples of a spatial increment,
+$\delta$. For example, if the first two points in a contour are at
+(\ang{135.25}\,E,~\ang{-45.50}\,N) and (\ang{135.75}\,E,~\ang{-45.75}\,N), and
+$\delta = \ang{0.01}$, the offset of the second point from the first point will
+be (50, -25). Offsets are always relative to the preceding point on the contour
+line. Fractional offsets are rounded to the nearest integer. The value of
+$\delta$ is chosen so that no offsets in the contour line fall outside the
+range $[-128, 127]$. This ensures the offsets can be represented as 8-bit signed
+integers. This offset procedure continues until the last point in the contour
+is reached. Then a new record is commenced for the next contour in the map
+being encoded.
+
+Readers may have noticed that the rounding of offsets to the nearest integer
+can introduce a source of error in the encoding of the contour lines. In
+practice these errors are small, and typically not visible when decoded
+contours are plotted on a map.
+
+All data are written to file in network-endian format. This ensures there is no
+ambiguity when encoding and decoding data on either big or little-endian
+computers. 
+
+\begin{table*}
+\centering
+\begin{tabular}{llll} \hline
+Byte range	& Type		& Description							& Units \\ \hline
+1				& UInt8		& WMO discipline code	& WMO code table~\citep[Table 0.0]{wmo2014}	\\
+2				& UInt8 		& WMO category	code		& WMO code table~\citep[Table 4.1]{wmo2014}	\\
+3				& UInt8 		& WMO parameter code		& WMO code table~\citep[Table 4.2]{wmo2014}	\\
+4--11			& Float64	& NWP base time 			& Seconds since 0000\,UTC, 1 January 1970	 	\\
+12--15		& Float32	& Forecast lead time 				& Hours since base time										\\	
+16--23		& Char		& Vertical level						& e.g. 950hPa, MSL, surface								\\
+24--27		& Float32	& Eastern boundary of domain		& degrees East													\\
+28--31		& Float32	& Western boundary of domain		& degrees East													\\
+32--35		& Float32	& Southern boundary of domain		& degrees North												\\
+36--39		& Float32	& Northern boundary of domain		& degrees North												\\ \hline
+\end{tabular}
+\caption{\label{tab:header_record}Format of the header record.}
+\end{table*}
+
+\begin{table*}
+\centering
+\begin{tabular}{llll} \hline
+Byte range		& Type		& Description											 		& Units or value		\\	\hline
+1--4				& Float32	& Contour level (e.g. \SI{100000}{\Pa})		 		& Variable dependent	\\
+5--6				& UInt16		& $n$: number of points in the contour line			&							\\
+7--10				& Float32	& $\delta$: spatial increment								& degrees \\
+11--14			& Float32	& $\lambda_1$: longitude of first point in contour	& degrees East\\
+15--18			& Float32	& $\phi_1$: latitude of first point in contour		& degrees North \\
+19					& SInt8		& Longitude offset from previous point					& $\lfloor(\lambda_2 - \lambda_1) / \delta\rceil$			\\
+20					& SInt8		& Latitude offset from previous point 					& $\lfloor(\phi_2 - \phi_1) / \delta\rceil$					\\
+\vdots			& \vdots		& \vdots															& \vdots 																\\
+$19 + 2(n-1)$	& SInt8		& Longitude offset from previous point					& $\lfloor(\lambda_n - \lambda_{(n-1)}) / \delta\rceil$	\\
+$20 + 2(n-1)$	& SInt8		& Latitude offset from previous point					& $\lfloor(\phi_n - \phi_{(n-1)}) / \delta\rceil$ 			\\ \hline
+\end{tabular}
+\caption{\label{tab:contour_record}Format of a record encoding a single contour line.}
+\end{table*}
+
+\subsection*{Decoding contours}
+\label{sec:decoding}
+
+Decoding of encoded contours is a simple reversal of the procedure used for
+encoding. Once decoded, the contour lines may be plotted on a map.
+
+Some users will prefer gridded data to contoured data. For each line segment in
+the contour data, the contour value and the location of the end points are
+taken. This provides an irregular network of data points. Sometimes more than
+one of these data points will fall within a grid cell in the output grid. When
+this happens, the average value and location of the points which fall within
+the grid cell is taken. Finally, a two-dimensional surface on the output grid
+is fitted to the irregular network of points using the method of continuous
+curvature splines in tension described by \cite{smith_wessel1990}. The coloured
+grid cells in Figure~\ref{fig:nzmslp} were created from these gridded data.
+
+\section*{Compression performance}
+\label{sec:performance}
+
+The compression method described in the previous section is a lossy scheme;
+compressed and then decompressed data will differ from the original data. There
+are two adjustable parameters which affect how much the data are compressed by,
+and how much information is lost. These are the spacing when contouring the
+original gridded data, and the tolerance when simplifying the resulting
+contours.
+
+To investigate the effect of the settings on the performance of the
+compression, the mean sea level pressure forecast for the New Zealand region
+used in the previous section was compressed with various contour spacings and
+tolerances. The resulting data were then decompressed and gridded and compared
+with the original field. The results are shown in
+Figures~\ref{fig:nzmslp}(e)--(g) and~\ref{fig:nzmslp}(j)--(k).
+
+As the isobar spacing increases, so too does the root mean square error (RMSE)
+of the compressed field when compared to the original field. On the other hand,
+the file sizes get a lot smaller with coarse contour spacings. Similarly, as
+the tolerance increases, the RMSE increases and the file sizes decrease.
+
+The appropriate settings for the contour interval and tolerance will depend on
+the forecast user's requirements. The errors introduced by the compression will
+also depend on the fields being compressed. Some fields will compress better
+than others; this is discussed later.
+
+\subsection*{Comparison with other compressed data formats}
+\label{sec:compression_comparison}
+
+Many data formats have compression incorporated into them. The WMO standard for
+transmission of gridded binary data is GRIB2. GRIB2 usually employs a simple
+lossless packing method, but it can also use a lossy JPEG~2000-based method,
+amongst others~\citep[p. 143]{wmo2019b}. NetCDF is another commonly used
+scientific data format. It utilises zlib-based lossless compression.
+
+To set a baseline from which to compare the various data compression formats,
+we consider uncompressed data to be represented by one 32-bit IEEE
+floating-point number for each grid point value in the domain. Some fields may
+be adequately represented by 16-bit half precision floats, and thus use half as
+much disc space as 32-bit floats. Very few, if any, geophysical fields require
+64-bit double precision floats.
+
+The mean sea level pressure forecasts used previously were converted to the
+various formats using \texttt{wgrib2}~\citep{noaa2021}.
+Table~\ref{tab:compression_comparison} shows sizes of the files covering the
+New Zealand region, along with the RMSE of the compressed data compared to the
+original data.
+
+\begin{table*}
+\centering
+\begin{tabular}{llll} \hline
+Format			& Settings																& RMSE (Pa)	& File size (bytes)	\\ \hline
+32-bit floats	& No compression														& 0			& \num{94612}			\\
+NetCDF			& Level 9 (maximum) compression									& 0			& \num{58854}			\\
+GRIB2				& Simple packing														& 0			& \num{41572}			\\
+GRIB2				& JPEG~2000 compression												& <1			& \num{20450}			\\
+BinCon			& Isobar spacing: \SI{200}{\Pa}, Tolerance: \ang{0.125}	& 25			& \num{1845}			\\\hline
+\end{tabular}
+\caption{\label{tab:compression_comparison}Comparison of file sizes for commonly used
+data formats.}
+\end{table*}
+
+The BinCon format is between 11 and 51 times smaller than the other formats in
+Table~\ref{tab:compression_comparison}. However, it must be borne in mind that
+BinCon is a lossy compression format, whereas the others are lossless, or
+nearly lossless in the case of the JPEG~2000 compression. Whether the size for
+loss of information trade-off is worthwhile depends on how the forecasts are
+used.
+
+\subsection*{Other fields}
+\label{sec:other_fields}
+
+The examples presented so far have been mean sea level pressure fields.
+However, the compression method works for any meteorological field which can be
+contoured. For example, Figure~\ref{fig:rain} shows the \SI{24}{\hour} rainfall
+accumulation forecast valid at 1200\,UTC, 5 January 2023. This also demonstrates
+that the contours need not be equally spaced. In this example, the isopleths are
+at 1, 2, 5, 10, 20, 50 and \SI{100}{\kg\per\m\squared}. The tolerance is
+\ang{0.125}.The compressed file size is \SI{6785}{\byte}; this is larger than
+the mean sea level pressure files with the same tolerance because there are
+more contours for the rainfall field than the mean sea level pressure field.
+
+\begin{figure*}
+\centering
+\includegraphics[width=11.7cm]{figures/apcpsfc.pdf}
+\caption{\label{fig:rain}\SI{24}{\hour} rainfall accumulation.}
+\end{figure*}
+
+Variables derived from raw NWP fields can also be compressed.
+Figure~\ref{fig:swp} shows forecasts of the \SI{925}{\hecto\Pa} streamlines and
+wind speed covering the Southwest Pacific. These were derived from the
+\SI{925}{\hecto\Pa} west-east and south-north wind speed components. For both
+the streamlines and wind speed, the tolerance is \ang{0.25}. The size of the
+compressed wind speed data is \SI{9304}{\byte}, and the compressed streamlines
+are \SI{2076}{\byte} in size. The wind speed data are larger because the wind
+speed contours are considerably more complex than the streamlines.
+
+\begin{figure*}
+\centering
+\includegraphics[width=11.7cm]{figures/swp.pdf}
+\caption{\label{fig:swp}\SI{24}{\hour} forecast of \SI{925}{\hecto\Pa}
+stream function and wind speed for the Southwest Pacific valid
+for 1200\,UTC, 5 January 2023. Wind speed units are knots.}
+\end{figure*}
+
+\section*{Conclusion}
+\label{sec:conclusion}
+
+Very high data compression ratios can be achieved by encoding data as contours
+instead of grid points. Compression ratios of up to fifty or more compared to
+uncompressed data are achievable. Such extreme compression methods are
+potentially of use in remote locations, particularly for marine applications.
+They may also have a role to play in compressing data for long-term storage.
+
+There may be a use for high compression data products in natural disasters and
+other emergency situations. For example, in January 2022 communications to the
+entire nation of Tonga were severely disrupted for over a month when the sole
+submarine cable to the islands was severed by the Hunga Tonga-Hunga Ha\f apai
+volcanic eruption~\citep{dominey-howes2022}. \citeauthor{dominey-howes2022}
+recommended diversifying the way we communicate, such as by using more
+satellite-based systems and other technologies. Alternative
+technologies for use in emergencies, such as high-frequency radio, are low
+bandwidth where data compression techniques are useful.
+
+A Julia language implementation of the BinCon compression method is available
+at \url{https://github.com/timo007/bicon}. Readers are free to download,
+experiment with and modify the code.
+
+\section*{Acknowledgements}
+\label{sec:acknowledgements}
+
+The author would like to thank their colleagues at the Bureau of Meteorology
+for discussions on the techniques presented in this article. Bob McDavitt,
+retired Weather Ambassador from the Meteorological Service of New Zealand,
+provided assistance with the OpenCPN software to decode and display IAC~FLEET.
+The graphics in this article were created using the Generic Mapping
+Tools~\citep{wessel_etal2019}.
+
+\raggedright
+\begin{thebibliography}{00}
+
+\bibitem[Burton and Cruz, 2020]{burton_cruz2020}
+\textbf{Burton P, Cruz BH.}
+2020.
+Data archive growth: Escaping from the black hole.
+\textsl{ECMWF Newsletter} \textbf{162:} 14.
+
+\bibitem[Dominey-Howes, 2022]{dominey-howes2022}
+\textbf{Dominey-Howes D.}
+2022.
+The Tonga volcanic eruption has revealed the vulnerabilities in our global
+telecommunication system.
+\textsl{Geography Bulletin} \textbf{54(1):} 52--53.
+
+\bibitem[Douglas and Peucker, 1973]{douglas_peucker1973}
+\textbf{Douglas DH, Peucker TK.}
+1973.
+Algorithms for the reduction of the number of points
+required to represent a digitized line or its caricature,
+\textsl{Cartographica: The International Journal for Geographic Information and
+Geovisualization} \textbf{10(2):} 112--122.
+
+\bibitem[FMS, 2023]{fms2023}
+\textbf{Fiji Meteorological Service.}
+2023.
+IAC~FLEET bulletin for the Southwest Pacific (updated daily).
+\url{https://tgftp.nws.noaa.gov/data/raw/as/asps20.nffn..txt}
+[accessed 4 January 2023].
+
+\bibitem[Gertz and Grappel, 1994]{gertz_grappel1994}
+\textbf{Gertz JL, Grappel RD.}
+1994.
+Storage and transmission of compressed weather maps and the like.
+\textsl{United States Patent}, Patent Number 5,363,107.
+
+\bibitem[Karthaus, 2012]{karthaus2012}
+\textbf{Karthaus, M.}
+2012.
+Javascript implementation of the Ramer Douglas Peucker Algorithm.
+\url{https://karthaus.nl/rdp/}
+[accessed 14 January 2023].
+
+\bibitem[Mahapatra and Makkapati, 2005]{mahapatra_makkapati2005}
+\textbf{Mahapatra PR, Makkapati VV.}
+2005,
+Ultra high compression for weather radar reflectivity data storage and transmission.
+\textsl{21st International Conference on Interactive Information Processing Systems (IIPS)
+for Meteorology, Oceanography, and Hydrology.}
+\url{https://ams.confex.com/ams/pdfpapers/82973.pdf}
+[accessed 14 January 2023].
+
+\bibitem[NOAA, 2023]{noaa2023}
+\textbf{National Oceanographic and Atmospheric Administration.}
+2023.
+IAC~FLEET bulletin for the North Atlantic and Europe (updated six-hourly).
+\url{https://tgftp.nws.noaa.gov/data/raw/as/asxx21.egrr..txt} 
+[accessed 5 January 2023].
+
+\bibitem[NOAA, 2021]{noaa2021}
+\textbf{National Oceanographic and Atmospheric Administration.}
+2021.
+wgrib2: wgrib for GRIB-2.
+\url{https://www.cpc.ncep.noaa.gov/products/wesley/wgrib2/}
+[accessed 13 January 2023].
+
+\bibitem[OpenCPN, 2023]{opencpn2023}
+\textbf{OpenCPN development team.}
+2023.
+OpenCPN Chart Plotter Navigation.
+\url{https://www.opencpn.org/}
+[accessed 14 January 2023].
+
+\bibitem[Organisation Météorologique Internationale, 1947]{imo1947}
+\textbf{Organisation Météorologique Internationale.}
+1947.
+Conférence Des Directeurs, Rapport Final.
+Washington, United States of America. [in French].
+
+\bibitem[Ramer, 1972]{ramer1972}
+\textbf{Ramer U.}
+1972.
+An Iterative Procedure for the Polygonal Approximation of Plane Curves.
+\textsl{Computer Graphics and Image Processing} \textbf{1}: 244--256.
+
+\bibitem[Scarmana, 2011]{scarmana2011}
+\textbf{Scarmana G.}
+2011.
+Compressing Images Using Contours.
+\textsl{Proceedings of the Surveying \& Spatial Sciences Biennial Conference 2011}
+pp. 269-277.
+
+\bibitem[Smith and Wessel, 1990]{smith_wessel1990}
+\textbf{Smith WHF, Wessel P.}
+1990.
+Gridding with continuous curvature splines in tension.
+\textsl{Geophysics} \textbf{55:} 293--305.
+
+\bibitem[Wessel \textsl{et al.}, 2019]{wessel_etal2019}
+\textbf{Wessel P, Luis JF, Uieda L, Scharroo R, Wobbe F, Smith WHF, Tian D.}
+2019.
+The Generic Mapping Tools version 6.
+\textsl{Geochemistry, Geophysics, Geosystems} \textbf{20:} 5556--5564.
+
+\bibitem[WMO, 2019]{wmo2019a}
+\textbf{World Meteorological Organization.}
+2019a.
+\textsl{Manual on Codes - International Codes, Volume I.1, Annex II to the WMO
+Technical Regulations: Part A -- Alphanumeric Codes.}
+Geneva, Switzerland.
+
+\bibitem[WMO, 2019]{wmo2019b}
+\textbf{World Meteorological Organization.}
+2019b.
+\textsl{Manual on Codes - International Codes, Volume I.2, Annex II
+to the WMO Technical Regulations: Part B -- Binary Codes, Part C -- Common
+Features to Binary and Alphanumeric Codes.}
+Geneva, Switzerland.
+
+\bibitem[WMO, 2014]{wmo2014}
+\textbf{World Meteorological Organization.}
+2014.
+Register: GRIB2 codes and flags,
+\url{http://codes.wmo.int/grib2/codeflag/}
+[accessed 13 January 2023].
+
+\end{thebibliography}	
+	
+\end{document}
