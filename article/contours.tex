@@ -206,17 +206,17 @@ computers.
 \begin{table*}
 \centering
 \begin{tabular}{llll} \hline
-Byte range	& Type		& Description							& Units \\ \hline
-1				& UInt8		& WMO discipline code	& WMO code table~\citep[Table 0.0]{wmo2014}	\\
-2				& UInt8 		& WMO category	code		& WMO code table~\citep[Table 4.1]{wmo2014}	\\
-3				& UInt8 		& WMO parameter code		& WMO code table~\citep[Table 4.2]{wmo2014}	\\
-4--11			& Float64	& NWP base time 			& Seconds since 0000\,UTC, 1 January 1970	 	\\
-12--15		& Float32	& Forecast lead time 				& Hours since base time										\\	
-16--23		& Char		& Vertical level						& e.g. 950hPa, MSL, surface								\\
-24--27		& Float32	& Eastern boundary of domain		& degrees East													\\
-28--31		& Float32	& Western boundary of domain		& degrees East													\\
-32--35		& Float32	& Southern boundary of domain		& degrees North												\\
-36--39		& Float32	& Northern boundary of domain		& degrees North												\\ \hline
+Byte range  & Type      & Description                    & Units \\ \hline
+1           & UInt8     & WMO discipline code            & WMO code table~\citep[Table 0.0]{wmo2014}  \\
+2           & UInt8     & WMO category code              & WMO code table~\citep[Table 4.1]{wmo2014}  \\
+3           & UInt8     & WMO parameter code             & WMO code table~\citep[Table 4.2]{wmo2014}  \\
+4--11       & Float64   & NWP base time                  & Seconds since 0000\,UTC, 1 January 1970    \\
+12--15      & Float32   & Forecast lead time             & Hours since base time                      \\ 
+16--23      & Char      & Vertical level                 & e.g. 950hPa, MSL, surface                  \\
+24--27      & Float32   & Eastern boundary of domain     & degrees East                               \\
+28--31      & Float32   & Western boundary of domain     & degrees East                               \\
+32--35      & Float32   & Southern boundary of domain    & degrees North                              \\
+36--39      & Float32   & Northern boundary of domain    & degrees North                              \\ \hline
 \end{tabular}
 \caption{\label{tab:header_record}Format of the header record.}
 \end{table*}
@@ -224,17 +224,17 @@ Byte range	& Type		& Description							& Units \\ \hline
 \begin{table*}
 \centering
 \begin{tabular}{llll} \hline
-Byte range		& Type		& Description											 		& Units or value		\\	\hline
-1--4				& Float32	& Contour level (e.g. \SI{100000}{\Pa})		 		& Variable dependent	\\
-5--6				& UInt16		& $n$: number of points in the contour line			&							\\
-7--10				& Float32	& $\delta$: spatial increment								& degrees \\
-11--14			& Float32	& $\lambda_1$: longitude of first point in contour	& degrees East\\
-15--18			& Float32	& $\phi_1$: latitude of first point in contour		& degrees North \\
-19					& SInt8		& Longitude offset from previous point					& $\lfloor(\lambda_2 - \lambda_1) / \delta\rceil$			\\
-20					& SInt8		& Latitude offset from previous point 					& $\lfloor(\phi_2 - \phi_1) / \delta\rceil$					\\
-\vdots			& \vdots		& \vdots															& \vdots 																\\
-$19 + 2(n-1)$	& SInt8		& Longitude offset from previous point					& $\lfloor(\lambda_n - \lambda_{(n-1)}) / \delta\rceil$	\\
-$20 + 2(n-1)$	& SInt8		& Latitude offset from previous point					& $\lfloor(\phi_n - \phi_{(n-1)}) / \delta\rceil$ 			\\ \hline
+Byte range     & Type      & Description                                      & Units or value                                         \\ \hline
+1--4           & Float32   & Contour level (e.g. \SI{100000}{\Pa})            & Variable dependent                                     \\
+5--6           & UInt16    & $n$: number of points in the contour line        &                                                        \\
+7--10          & Float32   & $\delta$: spatial increment                      & degrees                                                \\
+11--14         & Float32   & $\lambda_1$: longitude of first point in contour & degrees East                                           \\
+15--18         & Float32   & $\phi_1$: latitude of first point in contour     & degrees North                                          \\
+19             & SInt8     & Longitude offset from previous point             & $\lfloor(\lambda_2 - \lambda_1) / \delta\rceil$        \\
+20             & SInt8     & Latitude offset from previous point              & $\lfloor(\phi_2 - \phi_1) / \delta\rceil$              \\
+\vdots         & \vdots    & \vdots                                           & \vdots                                                 \\
+$19 + 2(n-1)$  & SInt8     & Longitude offset from previous point             & $\lfloor(\lambda_n - \lambda_{(n-1)}) / \delta\rceil$  \\
+$20 + 2(n-1)$  & SInt8     & Latitude offset from previous point              & $\lfloor(\phi_n - \phi_{(n-1)}) / \delta\rceil$        \\ \hline
 \end{tabular}
 \caption{\label{tab:contour_record}Format of a record encoding a single contour line.}
 \end{table*}
@@ -307,12 +307,12 @@ original data.
 \begin{table*}
 \centering
 \begin{tabular}{llll} \hline
-Format			& Settings																& RMSE (Pa)	& File size (bytes)	\\ \hline
-32-bit floats	& No compression														& 0			& \num{94612}			\\
-NetCDF			& Level 9 (maximum) compression									& 0			& \num{58854}			\\
-GRIB2				& Simple packing														& 0			& \num{41572}			\\
-GRIB2				& JPEG~2000 compression												& <1			& \num{20450}			\\
-BinCon			& Isobar spacing: \SI{200}{\Pa}, Tolerance: \ang{0.125}	& 25			& \num{1845}			\\\hline
+Format         & Settings                                               & RMSE (Pa) & File size (bytes)  \\ \hline
+32-bit floats  & No compression                                         & 0         & \num{94612}        \\
+NetCDF         & Level 9 (maximum) compression                          & 0         & \num{58854}        \\
+GRIB2          & Simple packing                                         & 0         & \num{41572}        \\
+GRIB2          & JPEG~2000 compression                                  & <1        & \num{20450}        \\
+BinCon         & Isobar spacing: \SI{200}{\Pa}, Tolerance: \ang{0.125}  & 25        & \num{1845}         \\\hline
 \end{tabular}
 \caption{\label{tab:compression_comparison}Comparison of file sizes for commonly used
 data formats.}
@@ -521,6 +521,6 @@ Register: GRIB2 codes and flags,
 \url{http://codes.wmo.int/grib2/codeflag/}
 [accessed 13 January 2023].
 
-\end{thebibliography}	
-	
+\end{thebibliography}
+   
 \end{document}
