@@ -44,13 +44,13 @@ has been an explosion in the volume of meteorological data collected and
 produced in recent years. For example, the European Centre for Medium-Range
 Weather Forecasts (ECMWF) has found that their data archives are increasing at
 such a rapid rate that storage is becoming expensive and
-difficult~\citep{burton_cruz2020}. Compression is one method, in conjunction
-with others, to help tackle this explosion of data.
+difficult~\citep{burton_cruz2020}. Compression is one method which can help
+tackle this explosion of data.
 
 Compression is also used in applications where dissemination of data is limited
 by low bandwidth communication channels. With the development of faster and
-cheaper communications methods, this problem is not as acute as in the past.
-However, there are still users who are limited by slow or expensive
+cheaper data transmission networks, this problem is not as acute as in the
+past. However, there are still users who are limited by slow or expensive
 communication.
 
 A contour-based compression method called Binary Contours (BinCon) is
@@ -92,13 +92,13 @@ and faster communications methods, IAC~FLEET is rarely used.
 
 BinCon is inspired by IAC~FLEET. It enables high-resolution fields to be
 encoded into files of similar size to IAC~FLEET. Furthermore, any NWP field can
-be encoded, not just mean sea level pressure isobars. As an example,
-Figure~\ref{fig:BinCon} shows mean sea level pressure for the New Zealand
-region plotted from NCEP (National Centers for Environmental Prediction) GFS
-(Global Forecast System) \ang{0.25} spatial resolution data compressed using
-the BinCon method\footnote{The New Zealand region in this article refers to the
-region from \ang{142}\,E--\ang{164}\,W, \ang{54}\,S--\ang{27}\,S.}. The data file used to
-make this plot is just \SI{1845}{\byte} in size.
+be encoded, not just mean sea level pressure isobars. For example,
+Figure~\ref{fig:BinCon} shows mean sea level pressure compressed using BinCon
+for the New Zealand region. \footnote{The New Zealand region in this article
+refers to the region from \ang{142}\,E--\ang{164}\,W,
+\ang{54}\,S--\ang{27}\,S.}. Data are from the NCEP (National Centers for
+Environmental Prediction) GFS (Global Forecast System) model. The compressed
+data file used to make this plot is just \SI{1845}{\byte} in size.
 
 \begin{figure*}
 \centering
@@ -119,7 +119,7 @@ These are described in the following section.
 \label{sec:contouring}
 
 The first step of the compression process is to create a contour plot of the
-gridded data that needs compressing. For example, Figure~\ref{fig:nzmslp}\,(a)
+gridded data. For example, Figure~\ref{fig:nzmslp}\,(a)
 shows a contour plot of a mean sea level pressure forecast for the New Zealand
 region using data from the NCEP GFS model. The spatial resolution of the
 original gridded data is \ang{0.25}. The forecast has a lead time of
@@ -268,7 +268,7 @@ contours.
 To investigate the effect of the settings on the performance of the
 compression, the mean sea level pressure forecast for the New Zealand region
 used in the previous section was compressed with various contour spacings and
-tolerances. The resulting data were then decompressed and gridded and compared
+tolerances. The resulting data were then decompressed, gridded and compared
 with the original field. The results are shown in
 Figures~\ref{fig:nzmslp}(e)--(g) and~\ref{fig:nzmslp}(j)--(k).
 
@@ -371,12 +371,12 @@ potentially of use in remote locations, particularly for marine applications.
 They may also have a role to play in compressing data for long-term storage.
 
 There may be a use for high compression data products in natural disasters and
-other emergency situations. For example, in January 2022 communications to the
+other emergencies. For example, in January 2022 communications to the
 entire nation of Tonga were severely disrupted for over a month when the sole
 submarine cable to the islands was severed by the Hunga Tonga-Hunga Ha\f apai
 volcanic eruption~\citep{dominey-howes2022}. \citeauthor{dominey-howes2022}
 recommended diversifying the way we communicate, such as by using more
-satellite-based systems and other technologies. Alternative
+satellite-based systems and other technologies. Some alternative
 technologies for use in emergencies, such as high-frequency radio, are low
 bandwidth where data compression techniques are useful.
 
