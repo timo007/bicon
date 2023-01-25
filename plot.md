@@ -1,9 +1,10 @@
 # Plotting BinCon data
 
+This script decodes an plots a BinCon compressed data file.
+
 ## Usage
 ```
-Usage: plot.jl -i data [--cpt palette] [--inc increment] [--reg region]
-    [-o outfile] [-h]
+Usage: julia plot.jl -i data [--cpt palette] [--inc increment] [--reg region] [-o outfile] [-h]
 ```
 
 ### -i data
@@ -15,7 +16,7 @@ stored on GitHub.
 ### --cpt palette
 palette is either the name of one of the pre-defined GMT palettes, or is the
 name of a file containing a custom colour palette. The default is the
-pre-defined batlow colour palette.
+pre-defined "batlow" colour palette.
 
 ### --inc increment
 When converting the contours to a grid, use this increment for the grid

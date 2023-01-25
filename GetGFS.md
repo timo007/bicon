@@ -1,7 +1,7 @@
 # Downloading GFS data and compressing it with BinCon
 
 This Julia script downloads recent GFS forecasts, and compresses them using
-BinCon. The user specifies an NWP basetime, parameter, and the tolerance and
+BinCon. The user specifies an NWP base-time, parameter, and the tolerance and
 contour interval compression parameters.
 
 The script currently collects the 24, 48, 72, 96 and 120 hour lead time
@@ -9,8 +9,7 @@ forecasts. It can easily be modified to collect other forecast lead times.
 
 ## Usage
 ```
-Usage: GetGFS.jl -t yyyymmddHH -v var -p lev --tol tol --cnt cint
-    --reg region [-h]
+Usage: julia GetGFS.jl -t yyyymmddHH [-v var] [-p lev] [--tol tol] [--cnt cint] [--reg region] [-h]
 ```
 
 ### -t yyyymmddHH
@@ -79,3 +78,26 @@ a longitude-latitude grid. In this case the script will download enough data to
 cover the entire non-rectangular region.
 
 ## Examples
+
+```
+julia GetGFS.jl -t 2023012412 -v prmslmsl --tol 0.125 --cnt 200 --reg AUS
+```
+
+Collects mean sea level pressure data from the GFS run on 24 January 2023, 1200
+UTC. The data are compressed using a tolerance of 0.125° and contour spacing of
+200 Pa. The script creates a series of files containing the raw NetCDF data,
+and the compressed contour data:
+
+```
+GFS_000-003-001_MSL_2023012412_024.nc
+GFS_000-003-001_MSL_2023012412_048.nc
+GFS_000-003-001_MSL_2023012412_072.nc
+GFS_000-003-001_MSL_2023012412_096.nc
+GFS_000-003-001_MSL_2023012412_120.nc
+
+GFS_AUS_000-003-001_MSL_2023012412_024.bin
+GFS_AUS_000-003-001_MSL_2023012412_048.bin
+GFS_AUS_000-003-001_MSL_2023012412_072.bin
+GFS_AUS_000-003-001_MSL_2023012412_096.bin
+GFS_AUS_000-003-001_MSL_2023012412_120.bin
+```
