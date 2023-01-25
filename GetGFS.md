@@ -18,7 +18,7 @@ month, dd is day, HH is hour. Times and dates are in UTC.
 
 ### -v var
 Is the GFS parameter to download. Default is "prsmslmsl". Currently recognised
-parameters (defined in BinaryContour.jl) are:
+parameters (defined in [BinaryContour.jl](./BinaryContour.jl)) are:
 
 | Var             | Description                                | GRIB codes   | Level     |
 |-----------------|--------------------------------------------|--------------|-----------|
@@ -36,13 +36,17 @@ parameters (defined in BinaryContour.jl) are:
 | tozneclm        | Total ozone content in atmospheric column  | 0, 14, 0     | Atmos     |
 
 The GRIB codes refer to the WMO discipline, category and parameter codes, which
-are defined in GRIB2 tables 0.0, 4.1 and 4.2 respectively. Where level is "-p
+are defined in [GRIB2](https://library.wmo.int/?lvl=notice_display&id=10684#.Y9D2OBNBzWQ) 
+itables [0.0](http://codes.wmo.int/grib2/codeflag/_0.0),
+[4.1](http://codes.wmo.int/grib2/codeflag/_4.1) and
+[4.2](http://codes.wmo.int/grib2/codeflag/_4.2) respectively. Where level is "-p
 lev" it means the pressure level is specified by the user using the -p lev
 option described below.
 
 Adding more parameters is simply a matter of editing the dictionary of
-parameters in BinaryContour.jl. Units of the parameters are as specified in WMO
-GRIB2 table 4.2.
+parameters in [BinaryContour.jl](./BinaryContour.jl). Units of the parameters
+are as specified in WMO GRIB2 table
+[4.2](http://codes.wmo.int/grib2/codeflag/_4.2).
 
 ### -p lev
 When a pressure level parameter is being downloaded and compressed, specify the
@@ -55,7 +59,8 @@ tol is the tolerance (in degrees) to use when compressing the data. Default:
 ### --cnt cint
 cint is the contour interval to use when compressing. Default: 200. If instead
 of a number, the name of a GMT colour palette is provided, then the contour
-levels are read from the colour palette file. An example is the file rain.cpt:
+levels are read from the colour palette file. An example is the file
+[rain.cpt](./rain.cpt):
 
 ```
 1  255/255/102          2     177.24/223.62/104 L
@@ -86,7 +91,7 @@ julia GetGFS.jl -t 2023012412 -v prmslmsl --tol 0.125 --cnt 200 --reg AUS
 Collects mean sea level pressure data from the GFS run on 24 January 2023, 1200
 UTC. The data are compressed using a tolerance of 0.125° and contour spacing of
 200 Pa. The script creates a series of files containing the raw NetCDF data,
-and the compressed contour data:
+and the compressed contour data for lead times 24, 48, 72, 96 and 120 hours:
 
 ```
 GFS_000-003-001_MSL_2023012412_024.nc
