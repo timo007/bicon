@@ -27,7 +27,7 @@ The dependencies of the software include Julia and [The Generic Mapping
 Tools](https://www.generic-mapping-tools.org/), including the
 [Julia wrappers](https://github.com/GenericMappingTools/GMT.jl/releases).
 
-More installation instructions to be written.
+Instructions for installing on Windows are [here](./install.md)
 
 ## Contact
 
