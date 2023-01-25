@@ -19,7 +19,7 @@ When installing Julia, make sure to click the "Add Julia to Path" box.
 Now open a Windows Powershell terminal (you may need to install this if you don't
 already have it).
 
-Run julia from the command line:
+Run Julia from the command line:
 
 ![Julia REPL](images/julia.png "Julia REPL")
 
