@@ -55,5 +55,6 @@ To test downloading and plotting a compressed data file from a remote server, tr
 julia.exe .\plot.jl -i https://github.com/timo007/bincon/blob/main/test_data/GFS_NZ_000-003-001_MSL_2023010412_024.bin?raw=true -o example.pdf 
 ```
 
-The resultant plot should look like this
+The resultant plot should look like this:
+
 ![Example plot](images/example.png "Example plot")
