@@ -1,0 +1,2 @@
+index.png filter=lfs diff=lfs merge=lfs -text
+julia.png filter=lfs diff=lfs merge=lfs -text
