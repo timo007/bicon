@@ -91,14 +91,17 @@ With the advent of high-resolution Numerical Weather Prediction (NWP) models
 and faster communications methods, IAC~FLEET is rarely used.
 
 BinCon is inspired by IAC~FLEET. It enables high-resolution fields to be
-encoded into files of similar size to IAC~FLEET. Furthermore, any NWP field can
-be encoded, not just mean sea level pressure isobars. For example,
+encoded into files of similar size to IAC~FLEET. For example,
 Figure~\ref{fig:BinCon} shows mean sea level pressure compressed using BinCon
 for the New Zealand region\footnote{The New Zealand region in this article
 refers to the region from \ang{142}\,E--\ang{164}\,W,
 \ang{54}\,S--\ang{27}\,S.}. Data are from the NCEP (National Centers for
 Environmental Prediction) GFS (Global Forecast System) model. The compressed
-data file used to make this plot is just \SI{1845}{\byte} in size.
+data file used to make this plot is just \SI{1845}{\byte} in size. Furthermore,
+any NWP field can be encoded, not just mean sea level pressure isobars,
+Figures~\ref{fig:rain} and~\ref{fig:swp} later in this article show accumulated
+precipitation and wind forecasts for the New Zealand and the Southwest Pacific
+regions plotted from NWP data compressed by the BinCon method.
 
 \begin{figure*}
 \centering
