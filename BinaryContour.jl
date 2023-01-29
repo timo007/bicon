@@ -79,7 +79,7 @@ function contour_to_bin(
             #     scenario is:
             δ = 2 * Δ / 127
 
-            # 3. Start the record for the new contour line.
+            # 3. Start a new record for the new contour line.
             write(file, hton(convert(Float32, clev)))
             write(file, hton(convert(Int16, nrows)))
             write(file, hton(convert(Float32, δ)))
@@ -94,15 +94,11 @@ function contour_to_bin(
             # 5. Round these relative locations to be integer multiples of δ.
             λϕ_rel = round.(λϕ_rel/δ)
 
-            # 6. Finally convert the rounded relative locations to be represented
+            # 6. Convert the rounded relative locations to be represented
             # as 8-bit signed offsets.
             λϕ_offset = convert(Array{Int8}, λϕ_rel[2:nrows, 1:2] - λϕ_rel[1:nrows-1, 1:2])
 
-            #locs =
-            #    round.(
-            #        Int8,
-            #        ((segment.data[2:nrows, 1:2] - segment.data[1:nrows-1, 1:2]) / δ),
-            #    )
+            # 7. Write the offsets to the current contour record
             write(file, hton.(λϕ_offset))
         end
     end
@@ -230,7 +226,6 @@ function contour_to_grid(
     println("Converting contours to grid")
     mean_contour = blockmean(contour, inc = inc, region = region, center = true)
     grid = surface(mean_contour, inc = inc, region = region, tension = 0, A = "m")
-    #grid = sphinterpolate(mean_contour, inc = inc, region = region, tension = :g)
     return grid
 end
 
