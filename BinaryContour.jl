@@ -16,16 +16,16 @@ export contour_to_bin,
     data_region
 
 struct ContourHeader
-    discipline::UInt8
-    category::UInt8
-    parameter::UInt8
-    base_time::Float64
-    lead_time::Float32
-    level::String
-    west::Float32
-    east::Float32
-    south::Float32
-    north::Float32
+    discipline::UInt8      # Value from WMO GRIB2 table 0.0
+    category::UInt8        # Value from WMO GRIB2 table 4.1
+    parameter::UInt8       # Value from WMO GRIB2 table 4.2
+    base_time::Float64     # Base time: Seconds since 1970-01-01T00:00Z.
+    lead_time::Float32     # Forecast lead time: Hours since base time.
+    level::String          # String containing vertical level.
+    west::Float32          # Western edge of the domain (°E).
+    east::Float32          # Eastern edge of the domain (°E).
+    south::Float32         # Southern edge of the domain (°N).
+    north::Float32         # Northern edge of the domain (°N).
 end
 
 
@@ -33,10 +33,20 @@ function contour_to_bin(
     contour::Vector{GMTdataset{Float64,2}},
     header::ContourHeader,
     outfile::String;
-    zval::Number = 1,
+    zval::Number = NaN,
 )
     """
     Convert contours (in GMT data sets) to binary encoded contours.
+
+    Arguments:
+      contour:    A GMT data set containing contour coordinates.
+      header:     Metadata describing the field being encoded.
+      outfile:    The name of the binary file to write.
+      zval:       Optional: if not a NaN, forces all contours to have this value,
+                  if set as NaN (the default), contour values are determined from
+                  the contour data set.
+
+    Returns:      Writes binary encoded contours to outfile
     """
     #
     # Write the contours in binary, network endianess.
@@ -57,9 +67,12 @@ function contour_to_bin(
         write(file, hton(header.north))         # Northern edge of domain
 
         #
-        # One record for each contour line
+        # Create one record for each contour line
         #
         for segment in contour
+            # We allow the option for the user to force all contours to
+            # have the same value. This was mainly implemented for the streamline
+            # plots; it is not the default.
             if isnan(zval)
                 clev = segment.data[1, 3]
             else
@@ -255,20 +268,19 @@ function map_params(region_name::Symbol)
     """
     Convert a region name (e.g. NZ) to GMT map projection parameters.
 
-  Argument:
-   region_name    A symbol representing the region.
-               :NZ = New Zealand
-               :SWP = South West Pacific
-               :TON = Tonga
-               :AUS = Australia
-               :UK = United Kingdom
-               :WORLD = World
+    Argument:
+         region_name    A symbol representing the region.
+                        :NZ    = New Zealand
+                        :SWP   = South West Pacific
+                        :TON   = Tonga
+                        :AUS   = Australia
+                        :UK    = United Kingdom
+                        :WORLD = World
 
-  Return:
-   Returns a dictionary with the various map related parameters for the
-   region of interest. More information on these parameters can be found
-   in the GMT documentation.
-
+    Return:
+         Returns a dictionary with the various map related parameters for the
+         region of interest. More information on these parameters can be found
+         in the GMT documentation.
     """
     proj = Dict(
         :NZ => Dict(
