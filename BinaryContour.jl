@@ -28,7 +28,6 @@ struct ContourHeader
     north::Float32         # Northern edge of the domain (°N).
 end
 
-
 function contour_to_bin(
     contour::Vector{GMTdataset{Float64,2}},
     header::ContourHeader,
@@ -53,7 +52,7 @@ function contour_to_bin(
     #
     open(outfile, "w") do file
         #
-        # Metadata in first record.
+        # Write metadata to the first record.
         #
         write(file, hton(header.discipline))    # WMO GRIB2 table 0.0
         write(file, hton(header.category))      # WMO GRIB2 table 4.1
