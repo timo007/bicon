@@ -42,17 +42,23 @@ function contour_to_bin(
     # Write the contours in binary, network endianess.
     #
     open(outfile, "w") do file
-        write(file, hton(header.discipline))
-        write(file, hton(header.category))
-        write(file, hton(header.parameter))
-        write(file, hton(header.base_time))
-        write(file, hton(header.lead_time))
-        write(file, header.level)
-        write(file, hton(header.west))
-        write(file, hton(header.east))
-        write(file, hton(header.south))
-        write(file, hton(header.north))
+        #
+        # Metadata in first record.
+        #
+        write(file, hton(header.discipline))    # WMO GRIB2 table 0.0
+        write(file, hton(header.category))      # WMO GRIB2 table 4.1
+        write(file, hton(header.parameter))     # WMO GRIB2 table 4.2
+        write(file, hton(header.base_time))     # NWP forecast base time
+        write(file, hton(header.lead_time))     # NWP forecast lead time
+        write(file, header.level)               # Vertical level
+        write(file, hton(header.west))          # Western edge of domain
+        write(file, hton(header.east))          # Eastern edge of domain
+        write(file, hton(header.south))         # Southern edge of domain
+        write(file, hton(header.north))         # Northern edge of domain
 
+        #
+        # One record for each contour line
+        #
         for segment in contour
             if isnan(zval)
                 clev = segment.data[1, 3]
@@ -60,19 +66,44 @@ function contour_to_bin(
                 clev = zval
             end
             nrows = size(segment.data, 1)
-            inc =
-                maximum(abs.(segment.data[2:nrows, 1:2] - segment.data[1:nrows-1, 1:2])) /
-                127
+            
+            # Work out the smallest possible value for δ (refer to the article).
+            #
+            # 1. Work out the maximum longitude _or_ latitude difference between the
+            #    adjacent coordinates, Δ:
+            Δ = maximum(abs.(segment.data[2:nrows, 1:2] - segment.data[1:nrows-1, 1:2]))
+
+            # 2. We want to select δ so that subsequent points on our encoded contour
+            #    line can be reached by offsets of no more than ±127 δ. This allows
+            #    the offsets to be encoded as signed 8-bit integers. The worst case
+            #     scenario is:
+            δ = 2 * Δ / 127
+
+            # 3. Start the record for the new contour line.
             write(file, hton(convert(Float32, clev)))
             write(file, hton(convert(Int16, nrows)))
-            write(file, hton(convert(Float32, inc)))
-            write(file, hton.(convert(Array{Float32}, segment.data[1, 1:2])))
-            locs =
-                round.(
-                    Int8,
-                    ((segment.data[2:nrows, 1:2] - segment.data[1:nrows-1, 1:2]) / inc),
-                )
-            write(file, hton.(locs))
+            write(file, hton(convert(Float32, δ)))
+            λϕ_start = convert(Array{Float32}, segment.data[1:1, 1:2])
+            write(file, hton.(λϕ_start))
+
+            # 4. Compute the longitudes and latitudes of the contour points
+            # relative to first point.
+            println(size(segment.data[1:nrows, 1:2]), size(λϕ_start))
+            λϕ_rel = segment.data[1:nrows, 1:2] .- λϕ_start
+
+            # 5. Round these relative locations to be integer multiples of δ.
+            λϕ_rel = round.(λϕ_rel/δ)
+
+            # 6. Finally convert the rounded relative locations to be represented
+            # as 8-bit signed offsets.
+            λϕ_offset = convert(Array{Int8}, λϕ_rel[2:nrows, 1:2] - λϕ_rel[1:nrows-1, 1:2])
+
+            #locs =
+            #    round.(
+            #        Int8,
+            #        ((segment.data[2:nrows, 1:2] - segment.data[1:nrows-1, 1:2]) / δ),
+            #    )
+            write(file, hton.(λϕ_offset))
         end
     end
 end
@@ -105,7 +136,7 @@ function bin_to_contour(infile::String)
         while !eof(file)
             zval = ntoh(read(file, Float32))
             npts = ntoh(read(file, UInt16))
-            inc = ntoh(read(file, Float32))
+            δ = ntoh(read(file, Float32))
             locs = Array{Float32}(undef, npts, 3)
             locs[1, 1] = ntoh(read(file, Float32))
             locs[1, 2] = ntoh(read(file, Float32))
@@ -113,7 +144,7 @@ function bin_to_contour(infile::String)
             offsets = Array{Int8}(undef, npts - 1, 2)
             read!(file, offsets)
             for row = 2:npts
-                locs[row, 1:2] = locs[row-1, 1:2] + offsets[row-1, 1:2] * inc
+                locs[row, 1:2] = locs[row-1, 1:2] + offsets[row-1, 1:2] * δ
                 locs[row, 3] = zval
             end
             push!(gmtds, mat2ds(locs, hdr = @sprintf("%g", zval)))
@@ -130,9 +161,9 @@ function GRIBparam(discipline::Integer, category::Integer, parameter::Integer)
   Data are available here: http://codes.wmo.int/grib2/codeflag/4.2?_format=csv
 
     Arguments:
-    	discipline:	Discipline - GRIB octet ...
-    	category:   Category - GRIB octet ...
-    	parameter:  Parameter - GRIB octet ..."
+      discipline: Discipline - GRIB octet ...
+      category:   Category - GRIB octet ...
+      parameter:  Parameter - GRIB octet ..."
 
     Returns:
     """
@@ -165,11 +196,11 @@ function grid_to_contour(
     after it has served its purpose.
 
     Arguments:
-    	grid:		GMT grid containting data to be contoured.
-    	header:	Header information
-    	cint:		Contour interval or the name of a colour palette file to get contours from.
-    	tol:		Contour tolerance (degrees)
-      cntfile:	Name of binary contour file to write.
+      grid:    GMT grid containting data to be contoured.
+      header:  Header information
+      cint:    Contour interval or the name of a colour palette file to get contours from.
+      tol:     Contour tolerance (degrees)
+      cntfile: Name of binary contour file to write.
 
     Returns: Nothing (data is written to file)
     """
@@ -189,12 +220,12 @@ function contour_to_grid(
     Convert contour lines to a regular grid.
 
     Arguments:
-    	contour:		The contour lines in GMTdataset format.
-    	inc:			The grid resolution (e.g. 15m/15m for 0.25°x0.25°)
-    	region:		The region (west, east, south, north)
+      contour:    The contour lines in GMTdataset format.
+      inc:        The grid resolution (e.g. 15m/15m for 0.25°x0.25°)
+      region:     The region (west, east, south, north)
 
     Returns:
-    	A GMTgrid containing the data on a regular grid.
+      A GMTgrid containing the data on a regular grid.
     """
     println("Converting contours to grid")
     mean_contour = blockmean(contour, inc = inc, region = region, center = true)
@@ -209,7 +240,7 @@ function data_region(region_name::Symbol)
     the domain covered by the map.
 
     Arguments:
-    	region_name:	Symbol representing the region (:NZ etc)
+      region_name:   Symbol representing the region (:NZ etc)
     """
     region_ds = mapproject(
         region = map_params(region_name)[:mapRegion],
@@ -230,18 +261,18 @@ function map_params(region_name::Symbol)
     Convert a region name (e.g. NZ) to GMT map projection parameters.
 
   Argument:
-  	region_name		A symbol representing the region.
-  					:NZ = New Zealand
-  					:SWP = South West Pacific
-  					:TON = Tonga
-  					:AUS = Australia
-  					:UK = United Kingdom
-  					:WORLD = World
+   region_name    A symbol representing the region.
+               :NZ = New Zealand
+               :SWP = South West Pacific
+               :TON = Tonga
+               :AUS = Australia
+               :UK = United Kingdom
+               :WORLD = World
 
   Return:
-  	Returns a dictionary with the various map related parameters for the
-  	region of interest. More information on these parameters can be found
-  	in the GMT documentation.
+   Returns a dictionary with the various map related parameters for the
+   region of interest. More information on these parameters can be found
+   in the GMT documentation.
 
     """
     proj = Dict(
