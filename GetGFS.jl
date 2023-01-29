@@ -194,7 +194,7 @@ function main()
     # Compress the NetCDF files which have been downloaded.
     #
     for file in file_list
-		  # The name of the compressed file is derived from the NetCDF file.
+        # The name of the compressed file is derived from the NetCDF file.
         cntfile = replace(file, "GFS" => "GFS_" * parsed_args["reg"], ".nc" => ".bin")
 
         GRIBparam = NCEPvar_to_GRIBparam(parsed_args["v"])

@@ -69,8 +69,8 @@ function contour_to_bin(
         # Create one record for each contour line
         #
         for segment in contour
-            # We allow the option for the user to force all contours to
-            # have the same value. This was mainly implemented for the streamline
+            # We allow the option for the user to force all contours to have
+            # the same value. This was mainly implemented for the streamline
             # plots; it is not the default.
             if isnan(zval)
                 clev = segment.data[1, 3]
@@ -78,33 +78,38 @@ function contour_to_bin(
                 clev = zval
             end
             nrows = size(segment.data, 1)
-            
+
             # Work out the smallest possible value for δ (refer to the article).
             #
-            # 1. Work out the maximum longitude _or_ latitude difference between the
-            #    adjacent coordinates, Δ:
+            # 1. Work out the maximum longitude _or_ latitude difference
+            # between the adjacent points on the contour line, Δ:
             Δ = maximum(abs.(segment.data[2:nrows, 1:2] - segment.data[1:nrows-1, 1:2]))
 
-            # 2. We want to select δ so that subsequent points on our encoded contour
-            #    line can be reached by offsets of no more than ±127 δ. This allows
-            #    the offsets to be encoded as signed 8-bit integers. The worst case
-            #     scenario is:
+            # 2. We want to select δ so that subsequent points on our encoded
+            # contour line can be reached by offsets of no more than ±127 δ.
+            # This allows the offsets to be encoded as signed 8-bit integers.
+            # The worst case scenario can be shown to be:
             δ = 2 * Δ / 127
 
             # 3. Start a new record for the new contour line.
             write(file, hton(convert(Float32, clev)))
             write(file, hton(convert(Int16, nrows)))
             write(file, hton(convert(Float32, δ)))
+
+            # λϕ_start is the coordinates of the first point on the contour
+            # line, represented as 32-bit floats. Append this to the current
+            # record.
             λϕ_start = convert(Array{Float32}, segment.data[1:1, 1:2])
             write(file, hton.(λϕ_start))
 
             # 4. Compute the longitudes and latitudes of the contour points
             # relative to first point.
-            println(size(segment.data[1:nrows, 1:2]), size(λϕ_start))
             λϕ_rel = segment.data[1:nrows, 1:2] .- λϕ_start
 
             # 5. Round these relative locations to be integer multiples of δ.
-            λϕ_rel = round.(λϕ_rel/δ)
+            # It is this rounding which is responsible for δ = 2 * Δ / 127
+            # rather than δ = Δ / 127
+            λϕ_rel = round.(λϕ_rel / δ)
 
             # 6. Convert the rounded relative locations to be represented
             # as 8-bit signed offsets.
