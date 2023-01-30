@@ -53,7 +53,7 @@ function make_plot(grid, contour, header::ContourHeader, region, cpt, outfile;)
         ),
         figsize = 20,
     )
-    coast!(area = (0, 0, 1), shore = "thinnest,purple")
+    coast!(area = (0, 0, 1), shore = "thinnest,magenta")
     plot!(
         contour,
         pen = "thin, black",
