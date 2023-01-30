@@ -2,6 +2,7 @@
 
 \usepackage{natbib}
 \usepackage{graphicx}
+\usepackage{tcolorbox}
 \usepackage{url}
 \usepackage{siunitx}
 \usepackage[margin=1.5cm]{geometry}
@@ -176,31 +177,56 @@ The data are encoded into a header record, and one contour record for each
 discrete contour line on the map. The header record contains meta-data
 describing the meteorological field being encoded (see
 Table~\ref{tab:header_record}). The contour records contain the locations of
-the line segments making up the contours (see Table~\ref{tab:contour_record})
-\footnote{The data types in Tables~\ref{tab:header_record}~and~\ref{tab:contour_record}
-are: UInt8 and UInt16 are 8 and 16-bit unsigned integers; SInt8 are 8-bit
-signed integers; Float32 and Float64 are IEEE 32 and 64-bit floating-point
-numbers; Char is a one byte character.}.
+the line segments making up the contours (see Table~\ref{tab:contour_record}).
+The algorithm for generating each contour record is described in the text box
+below. The procedure for encoding the contours is repeated until all the
+contour lines have been encoded.
 
-The procedure for encoding starts with the longitude and latitude
-of the first point in a contour, expressed as 32-bit IEEE floating-point
-numbers. The location of the next point is the starting point plus offsets in
-the longitude and latitude dimensions in multiples of a spatial increment,
-$\delta$. For example, if the first two points in a contour are at
-(\ang{135.25}\,E,~\ang{-45.50}\,N) and (\ang{135.75}\,E,~\ang{-45.75}\,N), and
-$\delta = \ang{0.01}$, the offset of the second point from the first point will
-be (50, -25). Offsets are always relative to the preceding point on the contour
-line. Fractional offsets are rounded to the nearest integer. The value of
-$\delta$ is chosen so that no offsets in the contour line fall outside the
-range $[-128, 127]$. This ensures the offsets can be represented as 8-bit signed
-integers. This offset procedure continues until the last point in the contour
-is reached. Then a new record is commenced for the next contour in the map
-being encoded.
+\begin{tcolorbox}[width=\textwidth, colback={lightgray}]
+\subsubsection*{Algorithm for generating a binary contour record}
+\begin{enumerate}
+\item \label{enum:max_distance} Determine the maximum absolute difference,
+$\Delta$, in either longitude or latitude between any two consecutive points on
+the contour line being encoded.
+\item \label{enum:spatial_increment} Compute the spatial increment:
+$\delta = 2\Delta/127$.
+\item Get the longitude and latitude of the first point on the contour
+line, $(\lambda_1, \phi_1)$.
+\item We now have enough information to write the first five values listed in
+Table~\ref{tab:contour_record} to the contour record.
+\item \label{enum:relative_locations1} Compute the location of all other points
+on the contour line relative to the first point. For example, if the first
+point on a contour, $(\lambda_1, \phi_1)$, has coordinates
+(\ang{130.1}\,E,~\ang{-45.6}\,N) and a latter point, $(\lambda_i, \phi_i)$, is
+at (\ang{134.8}\,E,~\ang{-47.2}\,N), the relative location of this latter point
+is (\ang{4.7},~\ang{-1.6}).
+\item \label{enum:relative_locations2} Express the relative locations computed
+at Step~\ref{enum:relative_locations1} as multiples of the spatial increment,
+$\delta$, from Step~\ref{enum:spatial_increment}.
+\item \label{enum:relative_locations3} Round the relative locations from
+Step~\ref{enum:relative_locations2} to integer values.
+\item \label{enum:offsets} Compute the offsets of each of the points from
+Step~\ref{enum:relative_locations3} for the points immediately preceding them
+in the contour line. For example, if the relative locations of two consecutive
+points in the contour line are $(5\delta, 6\delta)$ and $(18\delta, -25\delta)$
+respectively, then the offset of the second point from the first point is
+$(13\delta, -31\delta)$
+\item Append the offsets from Step~\ref{enum:offsets} to the contour record.
+Because of the way $\delta$ was computed at Step~\ref{enum:spatial_increment},
+the offsets from the previous step are guaranteed to lie within the range
+$[-127,127]$, and can be expressed as signed 8-bit integers. This concludes the
+current contour record.
+\end{enumerate}
+\end{tcolorbox}
 
-Readers may have noticed that the rounding of offsets to the nearest integer
-can introduce a source of error in the encoding of the contour lines. In
-practice these errors are small, and typically not visible when decoded
-contours are plotted on a map.
+Readers may have noticed that the rounding of the locations of the contour
+points to integer multiples of $\delta$ can introduce a source of error in the
+encoding of the contour lines. In practice these errors are very small. For
+example, if the maximum longitude or latitude distance between any two points
+on a contour line is \ang{1}, then $\delta \approx \ang{0.016}$. The maxmimum
+error in the encoded location will be $\pm \delta/2$ in either the longitude or
+latitude directions. For the example, this is approximately \ang{0.008} and is
+probably not visible when plotted on a map.
 
 All data are written to file in network-endian format. This ensures there is no
 ambiguity when encoding and decoding data on either big or little-endian
@@ -221,7 +247,11 @@ Byte range  & Type      & Description                    & Units \\ \hline
 32--35      & Float32   & Southern boundary of domain    & degrees North                              \\
 36--39      & Float32   & Northern boundary of domain    & degrees North                              \\ \hline
 \end{tabular}
-\caption{\label{tab:header_record}Format of the header record.}
+\caption{\label{tab:header_record}Format of the header record. The data types
+in Tables~\ref{tab:header_record}~and~\ref{tab:contour_record} are: UInt8 and
+UInt16 are 8 and 16-bit unsigned integers; SInt8 are 8-bit signed integers;
+Float32 and Float64 are IEEE 32 and 64-bit floating-point numbers; Char is a
+one-byte character.}
 \end{table*}
 
 \begin{table*}
@@ -233,13 +263,14 @@ Byte range     & Type      & Description                                      & 
 7--10          & Float32   & $\delta$: spatial increment                      & degrees                                                \\
 11--14         & Float32   & $\lambda_1$: longitude of first point in contour & degrees East                                           \\
 15--18         & Float32   & $\phi_1$: latitude of first point in contour     & degrees North                                          \\
-19             & SInt8     & Longitude offset from previous point             & $\lfloor(\lambda_2 - \lambda_1) / \delta\rceil$        \\
-20             & SInt8     & Latitude offset from previous point              & $\lfloor(\phi_2 - \phi_1) / \delta\rceil$              \\
+19             & SInt8     & Longitude offset of contour point 2 from point 1 & Multiples of $\delta$												\\
+20             & SInt8     & Latitude offset of contour point 2 from point 1  & Multiples of $\delta$												\\
 \vdots         & \vdots    & \vdots                                           & \vdots                                                 \\
-$19 + 2(n-1)$  & SInt8     & Longitude offset from previous point             & $\lfloor(\lambda_n - \lambda_{(n-1)}) / \delta\rceil$  \\
-$20 + 2(n-1)$  & SInt8     & Latitude offset from previous point              & $\lfloor(\phi_n - \phi_{(n-1)}) / \delta\rceil$        \\ \hline
+$19 + 2(n-1)$  & SInt8     & Longitude offset from previous point             & Multiples of $\delta$												\\
+$20 + 2(n-1)$  & SInt8     & Latitude offset from previous point              & Multiples of $\delta$												\\ \hline
 \end{tabular}
-\caption{\label{tab:contour_record}Format of a record encoding a single contour line.}
+\caption{\label{tab:contour_record}Format of a record encoding a single contour
+line.}
 \end{table*}
 
 \subsection*{Decoding contours}
