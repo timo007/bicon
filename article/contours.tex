@@ -79,13 +79,13 @@ Oceanographic and Atmospheric Administration (NOAA) respectively, can
 be downloaded from the Internet~\citep{fms2023, noaa2023}. A decoded and
 plotted analysis is shown in Figure~\ref{fig:iacplot}.
 
-\begin{figure*}
+\begin{figure}
 \centering
 \includegraphics[width=11.7cm]{figures/iacplot.pdf}
 \caption{\label{fig:iacplot}Isobars plotted from Fleet Code using
 OpenCPN~\citep{opencpn2023} The yellow lines are easterly wind troughs, and the
 orange line is a frontal system.}
-\end{figure*}
+\end{figure}
 
 Although IAC~FLEET is still an official code, it has low spatial resolution.
 With the advent of high-resolution Numerical Weather Prediction (NWP) models
@@ -104,13 +104,13 @@ Figures~\ref{fig:rain} and~\ref{fig:swp} later in this article show accumulated
 precipitation and wind forecasts for the New Zealand and the Southwest Pacific
 regions plotted from NWP data compressed by the BinCon method.
 
-\begin{figure*}
+\begin{figure}
 \centering
 \includegraphics[width=11.7cm]{figures/example.pdf}
 \caption{\label{fig:BinCon}Mean sea level pressure forecast valid at
 1200\,UTC, 5 January 2023. Data are compressed using the BinCon
 method.}
-\end{figure*}
+\end{figure}
 
 \section*{Method}
 \label{sec:method}
@@ -159,12 +159,12 @@ box. As the tolerance increases, the simplified contours become cruder. The
 appropriate tolerance will depend on the use to which the data are intended.
 Larger tolerances produce smaller compressed file sizes.
 
-\begin{figure*}
+\begin{figure}
 \centering
 \includegraphics[width=18cm]{figures/nzmslp.pdf}
 \caption{\label{fig:nzmslp}Mean sea level pressure forecast valid at
 1200\,UTC, 5 January 2023.}
-\end{figure*}
+\end{figure}
 
 \subsection*{Binary contour format}
 
@@ -381,11 +381,11 @@ at 1, 2, 5, 10, 20, 50 and \SI{100}{\kg\per\m\squared}. The tolerance is
 the mean sea level pressure files with the same tolerance because there are
 more contours for the rainfall field than the mean sea level pressure field.
 
-\begin{figure*}
+\begin{figure}
 \centering
 \includegraphics[width=11.7cm]{figures/apcpsfc.pdf}
 \caption{\label{fig:rain}\SI{24}{\hour} rainfall accumulation.}
-\end{figure*}
+\end{figure}
 
 Variables derived from raw NWP fields can also be compressed.
 Figure~\ref{fig:swp} shows forecasts of the \SI{925}{\hecto\Pa} streamlines and
@@ -396,13 +396,13 @@ compressed wind speed data is \SI{9304}{\byte}, and the compressed streamlines
 are \SI{2076}{\byte} in size. The wind speed data are larger because the wind
 speed contours are considerably more complex than the streamlines.
 
-\begin{figure*}
+\begin{figure}
 \centering
 \includegraphics[width=11.7cm]{figures/swp.pdf}
 \caption{\label{fig:swp}\SI{24}{\hour} forecast of \SI{925}{\hecto\Pa}
 stream function and wind speed for the Southwest Pacific valid
 for 1200\,UTC, 5 January 2023. Wind speed units are knots.}
-\end{figure*}
+\end{figure}
 
 \section*{Conclusion}
 \label{sec:conclusion}

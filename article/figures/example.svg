@@ -53,14 +53,14 @@
      inkscape:deskcolor="#d1d1d1"
      showgrid="false"
      inkscape:zoom="0.86266395"
-     inkscape:cx="403.40158"
+     inkscape:cx="383.69518"
      inkscape:cy="297.91438"
      inkscape:window-width="1659"
      inkscape:window-height="830"
      inkscape:window-x="0"
      inkscape:window-y="25"
      inkscape:window-maximized="0"
-     inkscape:current-layer="g35">
+     inkscape:current-layer="g33">
     <inkscape:page
        x="0"
        y="0"
@@ -729,17 +729,8 @@
          transform="scale(10)">
         <text
            xml:space="preserve"
-           transform="matrix(1,0,0,-1,55.4629,422.188)"
-           style="font-variant:normal;font-weight:normal;font-size:13.98px;font-family:AvantGarde;-inkscape-font-specification:AvantGarde-Book;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
-           id="text365"><tspan
-             x="0 12.84762 19.80966 26.268419 30.140881 39.67524 43.883221 52.970219 58.394459 63.818699 72.318542 76.52652 85.613518 89.485977 93.693962 102.78096 112.35726 120.8571 129.90216 138.98917 148.56546 152.43793 157.17714 166.33405 170.2065 183.05412 190.01616 196.47491 200.34738 205.506 213.78217 223.33051 228.48912 232.36159 236.23404 243.97896 251.72388 260.25168 264.12415 268.51385 277.67075 281.87875 290.96573 300.0108 309.55914 314.98337 319.7226 323.59506 331.33997 340.88831 343.68433 346.48032 356.05661 359.92908 369.47742 374.21664 378.08911 385.83401 393.57895 397.45139 405.19632 412.94125 419.65164 423.52411 429.47958 438.00739 446.50723 450.37967 458.1246 461.99707 468.73541 478.28375 486.81155 490.68402 498.42896 506.17386 513.91876"
-             y="0"
-             sodipodi:role="line"
-             id="tspan363">MSL pressure reduced to MSL (Pa): 24h forecast valid at 12:00Z Thu 5 Jan 2023</tspan></text>
-        <text
-           xml:space="preserve"
            transform="matrix(1,0,0,-1,104.259,2.149)"
-           style="font-variant:normal;font-weight:normal;font-size:12px;font-family:AvantGarde;-inkscape-font-specification:AvantGarde-Book;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
+           style="font-variant:normal;font-weight:normal;font-size:12px;font-family:'Avant garde book';-inkscape-font-specification:'Avant garde book, Normal';writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-style:normal;font-stretch:normal;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal"
            id="text375"><tspan
              x="0 6.6479998 13.296 19.944 24.743999 105.6 112.248 118.896 125.544 130.34399 210 216.64799 223.29601 229.944 234.744 317.67575 324.32376 330.97177 337.61975 417.15588 423.80389 430.45187 437.09988 441.89987"
              y="0"
@@ -2112,7 +2103,7 @@
         <text
            xml:space="preserve"
            transform="matrix(0.998737,-0.0502444,-0.0502444,-0.998737,201.913,19.5105)"
-           style="font-variant:normal;font-weight:normal;font-size:7.98px;font-family:AvantGarde;-inkscape-font-specification:AvantGarde-Book;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
+           style="font-variant:normal;font-weight:normal;font-size:7.97999936px;font-family:'Avant garde book';-inkscape-font-specification:'Avant garde book, Normal';writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-style:normal;font-stretch:normal;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal"
            id="text1061"><tspan
              x="0 4.4209204 8.8418407 13.26276 17.683681 22.104601"
              y="0"
@@ -2121,7 +2112,7 @@
         <text
            xml:space="preserve"
            transform="matrix(0.717762,-0.696289,-0.696289,-0.717762,48.3348,404.627)"
-           style="font-variant:normal;font-weight:normal;font-size:7.98px;font-family:AvantGarde;-inkscape-font-specification:AvantGarde-Book;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
+           style="font-variant:normal;font-weight:normal;font-size:7.97999711px;font-family:'Avant garde book';-inkscape-font-specification:'Avant garde book, Normal';writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-style:normal;font-stretch:normal;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal"
            id="text1065"><tspan
              x="0 4.4209213 8.8418427 13.262764 17.683685 22.104607"
              y="0"
@@ -2130,7 +2121,7 @@
         <text
            xml:space="preserve"
            transform="matrix(0.550189,0.83504,0.83504,-0.550189,30.1707,395.972)"
-           style="font-variant:normal;font-weight:normal;font-size:7.98px;font-family:AvantGarde;-inkscape-font-specification:AvantGarde-Book;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
+           style="font-variant:normal;font-weight:normal;font-size:7.98000079px;font-family:'Avant garde book';-inkscape-font-specification:'Avant garde book, Normal';writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-style:normal;font-stretch:normal;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal"
            id="text1069"><tspan
              x="0 4.4209194 8.8418388 13.262758 17.683678 22.104597"
              y="0"
@@ -2139,7 +2130,7 @@
         <text
            xml:space="preserve"
            transform="matrix(0.887574,0.460665,0.460665,-0.887574,294.053,297.043)"
-           style="font-variant:normal;font-weight:normal;font-size:7.98px;font-family:AvantGarde;-inkscape-font-specification:AvantGarde-Book;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
+           style="font-variant:normal;font-weight:normal;font-size:7.98000035px;font-family:'Avant garde book';-inkscape-font-specification:'Avant garde book, Normal';writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-style:normal;font-stretch:normal;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal"
            id="text1073"><tspan
              x="0 4.4209199 8.8418398 13.262759 17.68368 22.104599"
              y="0"
@@ -2148,7 +2139,7 @@
         <text
            xml:space="preserve"
            transform="matrix(0.970464,0.241244,0.241244,-0.970464,248.746,149.588)"
-           style="font-variant:normal;font-weight:normal;font-size:7.98px;font-family:AvantGarde;-inkscape-font-specification:AvantGarde-Book;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
+           style="font-variant:normal;font-weight:normal;font-size:7.98000356px;font-family:'Avant garde book';-inkscape-font-specification:'Avant garde book, Normal';writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-style:normal;font-stretch:normal;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal"
            id="text1077"><tspan
              x="0 4.420918 8.841836 13.262753 17.683672 22.104589"
              y="0"
@@ -2157,7 +2148,7 @@
         <text
            xml:space="preserve"
            transform="matrix(0.993865,-0.110602,-0.110602,-0.993865,204.919,29.7453)"
-           style="font-variant:normal;font-weight:normal;font-size:7.98px;font-family:AvantGarde;-inkscape-font-specification:AvantGarde-Book;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
+           style="font-variant:normal;font-weight:normal;font-size:7.97999798px;font-family:'Avant garde book';-inkscape-font-specification:'Avant garde book, Normal';writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-style:normal;font-stretch:normal;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal"
            id="text1081"><tspan
              x="0 4.4209208 8.8418417 13.262763 17.683683 22.104605"
              y="0"
@@ -2166,7 +2157,7 @@
         <text
            xml:space="preserve"
            transform="matrix(0.999773,0.0212914,0.0212914,-0.999773,121.23,368.419)"
-           style="font-variant:normal;font-weight:normal;font-size:7.98px;font-family:AvantGarde;-inkscape-font-specification:AvantGarde-Book;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
+           style="font-variant:normal;font-weight:normal;font-size:7.98000223px;font-family:'Avant garde book';-inkscape-font-specification:'Avant garde book, Normal';writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-style:normal;font-stretch:normal;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal"
            id="text1085"><tspan
              x="0 4.4209185 8.8418369 13.262755 17.683674 22.104593"
              y="0"
@@ -2175,7 +2166,7 @@
         <text
            xml:space="preserve"
            transform="matrix(0.893293,0.449475,0.449475,-0.893293,57.1238,374.094)"
-           style="font-variant:normal;font-weight:normal;font-size:7.98px;font-family:AvantGarde;-inkscape-font-specification:AvantGarde-Book;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
+           style="font-variant:normal;font-weight:normal;font-size:7.97999911px;font-family:'Avant garde book';-inkscape-font-specification:'Avant garde book, Normal';writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-style:normal;font-stretch:normal;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal"
            id="text1089"><tspan
              x="0 4.4209204 8.8418407 13.262761 17.683681 22.104601"
              y="0"
@@ -2184,7 +2175,7 @@
         <text
            xml:space="preserve"
            transform="matrix(0.423883,-0.905717,-0.905717,-0.423883,258.195,239.19)"
-           style="font-variant:normal;font-weight:normal;font-size:7.98px;font-family:AvantGarde;-inkscape-font-specification:AvantGarde-Book;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
+           style="font-variant:normal;font-weight:normal;font-size:7.97999942px;font-family:'Avant garde book';-inkscape-font-specification:'Avant garde book, Normal';writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-style:normal;font-stretch:normal;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal"
            id="text1093"><tspan
              x="0 4.4209204 8.8418407 13.26276 17.683681 22.104601"
              y="0"
@@ -2193,7 +2184,7 @@
         <text
            xml:space="preserve"
            transform="matrix(0.641985,0.766717,0.766717,-0.641985,263.112,138.188)"
-           style="font-variant:normal;font-weight:normal;font-size:7.98px;font-family:AvantGarde;-inkscape-font-specification:AvantGarde-Book;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
+           style="font-variant:normal;font-weight:normal;font-size:7.98000095px;font-family:'Avant garde book';-inkscape-font-specification:'Avant garde book, Normal';writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-style:normal;font-stretch:normal;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal"
            id="text1097"><tspan
              x="0 4.4209194 8.8418388 13.262758 17.683678 22.104597"
              y="0"
@@ -2202,7 +2193,7 @@
         <text
            xml:space="preserve"
            transform="matrix(0.99509,-0.0989723,-0.0989723,-0.99509,214.957,38.1074)"
-           style="font-variant:normal;font-weight:normal;font-size:7.98px;font-family:AvantGarde;-inkscape-font-specification:AvantGarde-Book;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
+           style="font-variant:normal;font-weight:normal;font-size:7.98000124px;font-family:'Avant garde book';-inkscape-font-specification:'Avant garde book, Normal';writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-style:normal;font-stretch:normal;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal"
            id="text1101"><tspan
              x="0 4.4209189 8.8418379 13.262757 17.683676 22.104595"
              y="0"
@@ -2211,7 +2202,7 @@
         <text
            xml:space="preserve"
            transform="matrix(0.633786,0.773508,0.773508,-0.633786,277.58,132.662)"
-           style="font-variant:normal;font-weight:normal;font-size:7.98px;font-family:AvantGarde;-inkscape-font-specification:AvantGarde-Book;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
+           style="font-variant:normal;font-weight:normal;font-size:7.98000246px;font-family:'Avant garde book';-inkscape-font-specification:'Avant garde book, Normal';writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-style:normal;font-stretch:normal;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal"
            id="text1105"><tspan
              x="0 4.4209185 8.8418369 13.262755 17.683674 22.104593"
              y="0"
@@ -2220,7 +2211,7 @@
         <text
            xml:space="preserve"
            transform="matrix(0.848325,0.529475,0.529475,-0.848325,409.496,381.205)"
-           style="font-variant:normal;font-weight:normal;font-size:7.98px;font-family:AvantGarde;-inkscape-font-specification:AvantGarde-Book;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
+           style="font-variant:normal;font-weight:normal;font-size:7.98000341px;font-family:'Avant garde book';-inkscape-font-specification:'Avant garde book, Normal';writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-style:normal;font-stretch:normal;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal"
            id="text1109"><tspan
              x="0 4.420918 8.841836 13.262753 17.683672 22.104589"
              y="0"
@@ -2229,7 +2220,7 @@
         <text
            xml:space="preserve"
            transform="matrix(0.907191,0.420719,0.420719,-0.907191,347.315,158.495)"
-           style="font-variant:normal;font-weight:normal;font-size:7.98px;font-family:AvantGarde;-inkscape-font-specification:AvantGarde-Book;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
+           style="font-variant:normal;font-weight:normal;font-size:7.97999979px;font-family:'Avant garde book';-inkscape-font-specification:'Avant garde book, Normal';writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-style:normal;font-stretch:normal;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal"
            id="text1113"><tspan
              x="0 4.4209199 8.8418398 13.26276 17.68368 22.104599"
              y="0"
@@ -2238,7 +2229,7 @@
         <text
            xml:space="preserve"
            transform="matrix(0.335287,-0.942116,-0.942116,-0.335287,211.923,205.674)"
-           style="font-variant:normal;font-weight:normal;font-size:7.98px;font-family:AvantGarde;-inkscape-font-specification:AvantGarde-Book;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
+           style="font-variant:normal;font-weight:normal;font-size:7.98000002px;font-family:'Avant garde book';-inkscape-font-specification:'Avant garde book, Normal';writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-style:normal;font-stretch:normal;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal"
            id="text1117"><tspan
              x="0 4.4209199 8.8418398 13.262759 17.68368 22.104599"
              y="0"
@@ -2247,7 +2238,7 @@
         <text
            xml:space="preserve"
            transform="matrix(0.819652,-0.572862,-0.572862,-0.819652,294.427,178.47)"
-           style="font-variant:normal;font-weight:normal;font-size:7.98px;font-family:AvantGarde;-inkscape-font-specification:AvantGarde-Book;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
+           style="font-variant:normal;font-weight:normal;font-size:7.97999866px;font-family:'Avant garde book';-inkscape-font-specification:'Avant garde book, Normal';writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-style:normal;font-stretch:normal;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal"
            id="text1121"><tspan
              x="0 4.4209204 8.8418407 13.262762 17.683681 22.104603"
              y="0"
@@ -2256,7 +2247,7 @@
         <text
            xml:space="preserve"
            transform="matrix(0.443384,-0.896332,-0.896332,-0.443384,193.824,198.508)"
-           style="font-variant:normal;font-weight:normal;font-size:7.98px;font-family:AvantGarde;-inkscape-font-specification:AvantGarde-Book;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
+           style="font-variant:normal;font-weight:normal;font-size:7.97999804px;font-family:'Avant garde book';-inkscape-font-specification:'Avant garde book, Normal';writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-style:normal;font-stretch:normal;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal"
            id="text1125"><tspan
              x="0 4.4209208 8.8418417 13.262763 17.683683 22.104605"
              y="0"
@@ -2265,7 +2256,7 @@
         <text
            xml:space="preserve"
            transform="matrix(0.794415,0.607376,0.607376,-0.794415,322.541,182.811)"
-           style="font-variant:normal;font-weight:normal;font-size:7.98px;font-family:AvantGarde;-inkscape-font-specification:AvantGarde-Book;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
+           style="font-variant:normal;font-weight:normal;font-size:7.97999656px;font-family:'Avant garde book';-inkscape-font-specification:'Avant garde book, Normal';writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-style:normal;font-stretch:normal;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal"
            id="text1129"><tspan
              x="0 4.4209218 8.8418436 13.262765 17.683687 22.104609"
              y="0"
@@ -2274,7 +2265,7 @@
         <text
            xml:space="preserve"
            transform="matrix(0.525917,0.850536,0.850536,-0.525917,391.918,226.878)"
-           style="font-variant:normal;font-weight:normal;font-size:7.98px;font-family:AvantGarde;-inkscape-font-specification:AvantGarde-Book;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
+           style="font-variant:normal;font-weight:normal;font-size:7.97999903px;font-family:'Avant garde book';-inkscape-font-specification:'Avant garde book, Normal';writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-style:normal;font-stretch:normal;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal"
            id="text1133"><tspan
              x="0 4.4209204 8.8418407 13.262761 17.683681 22.104603"
              y="0"
@@ -2283,7 +2274,7 @@
         <text
            xml:space="preserve"
            transform="matrix(0.539212,-0.84217,-0.84217,-0.539212,179.393,176.928)"
-           style="font-variant:normal;font-weight:normal;font-size:7.98px;font-family:AvantGarde;-inkscape-font-specification:AvantGarde-Book;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
+           style="font-variant:normal;font-weight:normal;font-size:7.98000018px;font-family:'Avant garde book';-inkscape-font-specification:'Avant garde book, Normal';writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-style:normal;font-stretch:normal;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal"
            id="text1137"><tspan
              x="0 4.4209199 8.8418398 13.262759 17.68368 22.104599"
              y="0"
@@ -2292,7 +2283,7 @@
         <text
            xml:space="preserve"
            transform="matrix(0.976296,0.21644,0.21644,-0.976296,63.8563,301.1)"
-           style="font-variant:normal;font-weight:normal;font-size:7.98px;font-family:AvantGarde;-inkscape-font-specification:AvantGarde-Book;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
+           style="font-variant:normal;font-weight:normal;font-size:7.97999913px;font-family:'Avant garde book';-inkscape-font-specification:'Avant garde book, Normal';writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-style:normal;font-stretch:normal;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal"
            id="text1141"><tspan
              x="0 4.4209204 8.8418407 13.262761 17.683681 22.104601"
              y="0"
@@ -2301,7 +2292,7 @@
         <text
            xml:space="preserve"
            transform="matrix(0.953243,-0.302203,-0.302203,-0.953243,397.313,260.046)"
-           style="font-variant:normal;font-weight:normal;font-size:7.98px;font-family:AvantGarde;-inkscape-font-specification:AvantGarde-Book;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
+           style="font-variant:normal;font-weight:normal;font-size:7.98000425px;font-family:'Avant garde book';-inkscape-font-specification:'Avant garde book, Normal';writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-style:normal;font-stretch:normal;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal"
            id="text1145"><tspan
              x="0 4.4209175 8.841835 13.262753 17.68367 22.104588"
              y="0"
@@ -2310,7 +2301,7 @@
         <text
            xml:space="preserve"
            transform="matrix(0.507388,-0.861718,-0.861718,-0.507388,163.617,167.141)"
-           style="font-variant:normal;font-weight:normal;font-size:7.98px;font-family:AvantGarde;-inkscape-font-specification:AvantGarde-Book;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
+           style="font-variant:normal;font-weight:normal;font-size:7.97999777px;font-family:'Avant garde book';-inkscape-font-specification:'Avant garde book, Normal';writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-style:normal;font-stretch:normal;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal"
            id="text1149"><tspan
              x="0 4.4209213 8.8418427 13.262763 17.683685 22.104605"
              y="0"
@@ -2319,7 +2310,7 @@
         <text
            xml:space="preserve"
            transform="matrix(0.177944,0.984041,0.984041,-0.177944,432.146,221.993)"
-           style="font-variant:normal;font-weight:normal;font-size:7.98px;font-family:AvantGarde;-inkscape-font-specification:AvantGarde-Book;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
+           style="font-variant:normal;font-weight:normal;font-size:7.97999672px;font-family:'Avant garde book';-inkscape-font-specification:'Avant garde book, Normal';writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-style:normal;font-stretch:normal;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal"
            id="text1153"><tspan
              x="0 4.4209218 8.8418436 13.262765 17.683687 22.104609"
              y="0"
@@ -2328,7 +2319,7 @@
         <text
            xml:space="preserve"
            transform="matrix(0.282341,-0.959314,-0.959314,-0.282341,133.194,160.158)"
-           style="font-variant:normal;font-weight:normal;font-size:7.98px;font-family:AvantGarde;-inkscape-font-specification:AvantGarde-Book;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
+           style="font-variant:normal;font-weight:normal;font-size:7.98000058px;font-family:'Avant garde book';-inkscape-font-specification:'Avant garde book, Normal';writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-style:normal;font-stretch:normal;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal"
            id="text1157"><tspan
              x="0 4.4209194 8.8418388 13.262758 17.683678 22.104597"
              y="0"
@@ -2337,7 +2328,7 @@
         <text
            xml:space="preserve"
            transform="matrix(0.740922,0.671591,0.671591,-0.740922,45.8191,255.438)"
-           style="font-variant:normal;font-weight:normal;font-size:7.98px;font-family:AvantGarde;-inkscape-font-specification:AvantGarde-Book;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
+           style="font-variant:normal;font-weight:normal;font-size:7.98000022px;font-family:'Avant garde book';-inkscape-font-specification:'Avant garde book, Normal';writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-style:normal;font-stretch:normal;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal"
            id="text1161"><tspan
              x="0 4.4209199 8.8418398 13.262759 17.68368 22.104599"
              y="0"
@@ -2346,7 +2337,7 @@
         <text
            xml:space="preserve"
            transform="matrix(0.36926,-0.929326,-0.929326,-0.36926,32.5297,218.904)"
-           style="font-variant:normal;font-weight:normal;font-size:7.98px;font-family:AvantGarde;-inkscape-font-specification:AvantGarde-Book;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
+           style="font-variant:normal;font-weight:normal;font-size:7.98000069px;font-family:'Avant garde book';-inkscape-font-specification:'Avant garde book, Normal';writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-style:normal;font-stretch:normal;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal"
            id="text1165"><tspan
              x="0 4.4209194 8.8418388 13.262758 17.683678 22.104597"
              y="0"
@@ -2355,7 +2346,7 @@
         <text
            xml:space="preserve"
            transform="matrix(0.943512,0.331338,0.331338,-0.943512,36.9098,186.753)"
-           style="font-variant:normal;font-weight:normal;font-size:7.98px;font-family:AvantGarde;-inkscape-font-specification:AvantGarde-Book;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
+           style="font-variant:normal;font-weight:normal;font-size:7.98000068px;font-family:'Avant garde book';-inkscape-font-specification:'Avant garde book, Normal';writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-style:normal;font-stretch:normal;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal"
            id="text1169"><tspan
              x="0 4.4209194 8.8418388 13.262758 17.683678 22.104597"
              y="0"
@@ -2364,7 +2355,7 @@
         <text
            xml:space="preserve"
            transform="matrix(0.0232108,0.999731,0.999731,-0.0232108,446.725,199.981)"
-           style="font-variant:normal;font-weight:normal;font-size:7.98px;font-family:AvantGarde;-inkscape-font-specification:AvantGarde-Book;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
+           style="font-variant:normal;font-weight:normal;font-size:7.9799965px;font-family:'Avant garde book';-inkscape-font-specification:'Avant garde book, Normal';writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-style:normal;font-stretch:normal;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal"
            id="text1173"><tspan
              x="0 4.4209218 8.8418436 13.262765 17.683687 22.104609"
              y="0"
@@ -2373,7 +2364,7 @@
         <text
            xml:space="preserve"
            transform="matrix(0.33578,-0.94194,-0.94194,-0.33578,78.1164,176.69)"
-           style="font-variant:normal;font-weight:normal;font-size:7.98px;font-family:AvantGarde;-inkscape-font-specification:AvantGarde-Book;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
+           style="font-variant:normal;font-weight:normal;font-size:7.98000305px;font-family:'Avant garde book';-inkscape-font-specification:'Avant garde book, Normal';writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-style:normal;font-stretch:normal;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal"
            id="text1177"><tspan
              x="0 4.420918 8.841836 13.262754 17.683672 22.104591"
              y="0"
@@ -2382,7 +2373,7 @@
         <text
            xml:space="preserve"
            transform="matrix(0.143665,0.989626,0.989626,-0.143665,460.757,177.98)"
-           style="font-variant:normal;font-weight:normal;font-size:7.98px;font-family:AvantGarde;-inkscape-font-specification:AvantGarde-Book;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
+           style="font-variant:normal;font-weight:normal;font-size:7.98000273px;font-family:'Avant garde book';-inkscape-font-specification:'Avant garde book, Normal';writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-style:normal;font-stretch:normal;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal"
            id="text1181"><tspan
              x="0 4.4209185 8.8418369 13.262755 17.683674 22.104591"
              y="0"
@@ -2391,7 +2382,7 @@
         <text
            xml:space="preserve"
            transform="matrix(0.320778,0.947154,0.947154,-0.320778,471.904,154.921)"
-           style="font-variant:normal;font-weight:normal;font-size:7.98px;font-family:AvantGarde;-inkscape-font-specification:AvantGarde-Book;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
+           style="font-variant:normal;font-weight:normal;font-size:7.98000283px;font-family:'Avant garde book';-inkscape-font-specification:'Avant garde book, Normal';writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-style:normal;font-stretch:normal;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal"
            id="text1185"><tspan
              x="0 4.4209185 8.8418369 13.262754 17.683674 22.104591"
              y="0"
@@ -2400,7 +2391,7 @@
         <text
            xml:space="preserve"
            transform="matrix(0.0202445,0.999795,0.999795,-0.0202445,499.504,141.129)"
-           style="font-variant:normal;font-weight:normal;font-size:7.98px;font-family:AvantGarde;-inkscape-font-specification:AvantGarde-Book;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
+           style="font-variant:normal;font-weight:normal;font-size:7.98000021px;font-family:'Avant garde book';-inkscape-font-specification:'Avant garde book, Normal';writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-style:normal;font-stretch:normal;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal"
            id="text1189"><tspan
              x="0 4.4209199 8.8418398 13.262759 17.68368 22.104599"
              y="0"
@@ -2409,7 +2400,7 @@
         <text
            xml:space="preserve"
            transform="matrix(0.0967144,0.995312,0.995312,-0.0967144,520.317,128.003)"
-           style="font-variant:normal;font-weight:normal;font-size:7.98px;font-family:AvantGarde;-inkscape-font-specification:AvantGarde-Book;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
+           style="font-variant:normal;font-weight:normal;font-size:7.98000113px;font-family:'Avant garde book';-inkscape-font-specification:'Avant garde book, Normal';writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-style:normal;font-stretch:normal;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal"
            id="text1193"><tspan
              x="0 4.4209194 8.8418388 13.262757 17.683678 22.104597"
              y="0"
@@ -2418,7 +2409,7 @@
         <text
            xml:space="preserve"
            transform="matrix(0.0633132,-0.997994,-0.997994,-0.0633132,554.485,136.717)"
-           style="font-variant:normal;font-weight:normal;font-size:7.98px;font-family:AvantGarde;-inkscape-font-specification:AvantGarde-Book;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
+           style="font-variant:normal;font-weight:normal;font-size:7.97999741px;font-family:'Avant garde book';-inkscape-font-specification:'Avant garde book, Normal';writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-style:normal;font-stretch:normal;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal"
            id="text1197"><tspan
              x="0 4.4209213 8.8418427 13.262764 17.683685 22.104607"
              y="0"
