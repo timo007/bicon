@@ -185,12 +185,20 @@ contour lines have been encoded.
 \begin{tcolorbox}[width=\textwidth, colback={lightgray}]
 \subsubsection*{Algorithm for generating a binary contour record}
 \begin{enumerate}
-\item \label{enum:max_distance} Determine the maximum absolute difference,
-$\Delta$, in either longitude or latitude between any two consecutive points on
-the contour line being encoded.
-\item \label{enum:spatial_increment} Compute the spatial increment:
-$\delta = 2\Delta/127$.
-\item Get the longitude and latitude of the first point on the contour
+\item \label{enum:max_distance} Start a new record for
+the contour line. The contour line is composed of $n$ points
+with longitude and latitude coordinates $(\lambda_i, \phi_i)$ for
+$1\leq i\leq n$.
+\item \label{enum:distances} For the second and subsequent points on the line,
+compute the longitude and latitude differences from the
+preceding point on the line:\\
+$(d\lambda_i, d\phi_i) = (\lambda_i-\lambda_{i-1}, \phi_i-\phi_{i-1})$.
+\item Compute the maximum
+absolute value of the differences from Step~\ref{enum:distances}:\\
+$\Delta = \max(|d\lambda_2|, \ldots, |d\lambda_n|, |d\phi_2|, \ldots, |d\phi_n|)$.
+\item \label{enum:spatial_increment} Compute a spatial increment:
+$\delta = 2\Delta/127$; this is used later in the algorithm.
+\item Extract the longitude and latitude of the first point on the contour
 line, $(\lambda_1, \phi_1)$.
 \item We now have enough information to write the first five values listed in
 Table~\ref{tab:contour_record} to the contour record.
@@ -202,20 +210,18 @@ at (\ang{134.8}\,E,~\ang{-47.2}\,N), the relative location of this latter point
 is (\ang{4.7},~\ang{-1.6}).
 \item \label{enum:relative_locations2} Express the relative locations computed
 at Step~\ref{enum:relative_locations1} as multiples of the spatial increment,
-$\delta$, from Step~\ref{enum:spatial_increment}.
-\item \label{enum:relative_locations3} Round the relative locations from
-Step~\ref{enum:relative_locations2} to integer values.
-\item \label{enum:offsets} Compute the offsets of each of the points from
-Step~\ref{enum:relative_locations3} for the points immediately preceding them
+$\delta$, from Step~\ref{enum:spatial_increment}. Round these multiples to
+the nearest integer values.
+\item \label{enum:offsets} Compute the offsets of each of the points in
+Step~\ref{enum:relative_locations2} from the points immediately preceding them
 in the contour line. For example, if the relative locations of two consecutive
 points in the contour line are $(5\delta, 6\delta)$ and $(18\delta, -25\delta)$
 respectively, then the offset of the second point from the first point is
-$(13\delta, -31\delta)$
+$(13\delta, -31\delta)$. Because of the way $\delta$ was computed at
+Step~\ref{enum:spatial_increment}, these offsets are guaranteed to lie within
+the range $[-127,127]$, and can be expressed as signed 8-bit integers.
 \item Append the offsets from Step~\ref{enum:offsets} to the contour record.
-Because of the way $\delta$ was computed at Step~\ref{enum:spatial_increment},
-the offsets from the previous step are guaranteed to lie within the range
-$[-127,127]$, and can be expressed as signed 8-bit integers. This concludes the
-current contour record.
+This concludes the current contour record.
 \end{enumerate}
 \end{tcolorbox}
 
@@ -279,6 +285,9 @@ line.}
 Decoding of encoded contours is a simple reversal of the procedure used for
 encoding. Once decoded, the contour lines may be plotted on a map.
 
+\subsubsection*{Converting contours to a regular grid}
+\label{sec:gridding}
+
 Some users will prefer gridded data to contoured data. For each line segment in
 the contour data, the contour value and the location of the end points are
 taken. This provides an irregular network of data points. Sometimes more than
@@ -287,7 +296,8 @@ this happens, the average value and location of the points which fall within
 the grid cell is taken. Finally, a two-dimensional surface on the output grid
 is fitted to the irregular network of points using the method of continuous
 curvature splines in tension described by \cite{smith_wessel1990}. The coloured
-grid cells in Figure~\ref{fig:nzmslp} were created from these gridded data.
+grid cells in Figure~\ref{fig:nzmslp}, panels a--k were created from these
+gridded data.
 
 \section*{Compression performance}
 \label{sec:performance}
@@ -327,10 +337,9 @@ scientific data format. It utilises zlib-based lossless compression.
 
 To set a baseline from which to compare the various data compression formats,
 we consider uncompressed data to be represented by one 32-bit IEEE
-floating-point number for each grid point value in the domain. Some fields may
-be adequately represented by 16-bit half precision floats, and thus use half as
-much disc space as 32-bit floats. Very few, if any, geophysical fields require
-64-bit double precision floats.
+floating-point number for each grid point value in the domain. 32-bit floating
+point numbers should be adequate to represent most, if not all, geophysical
+fields.
 
 The mean sea level pressure forecasts used previously were converted to the
 various formats using \texttt{wgrib2}~\citep{noaa2021}.
@@ -421,12 +430,11 @@ experiment with and modify the code.
 \section*{Acknowledgements}
 \label{sec:acknowledgements}
 
-The author would like to thank their colleagues at the Bureau of Meteorology
-for discussions on the techniques presented in this article. Bob McDavitt,
-retired Weather Ambassador from the Meteorological Service of New Zealand,
-provided assistance with the OpenCPN software to decode and display IAC~FLEET.
-The graphics in this article were created using the Generic Mapping
-Tools~\citep{wessel_etal2019}.
+The author would like Andrew Kelly, a colleague at the Bureau of Meteorology,
+for helpful comments an this article. Bob McDavitt, retired Weather Ambassador
+from the Meteorological Service of New Zealand, provided assistance with the
+OpenCPN software to decode and display IAC~FLEET. The graphics in this article
+were created using the Generic Mapping Tools~\citep{wessel_etal2019}.
 
 \raggedright
 \begin{thebibliography}{00}
