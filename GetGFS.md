@@ -32,7 +32,7 @@ parameters (defined in [BinaryContour.jl](./BinaryContour.jl)) are:
 | prateavesfc     | Averarge precipitation rate at the surface | 0, 1, 52     | Surface   |
 | gustsfc         | Wind gust speed at the surface             | 0, 2, 22     | Surface   |
 | prmslmsl        | Mean sea level pressure                    | 0, 3, 1      | MSL       |
-| hgtprs          | Geopotential heigh of pressure level       | 0, 3, 5      | -v lev    |
+| hgtprs          | Geopotential heigh of pressure level       | 0, 3, 5      | -p lev    |
 | tozneclm        | Total ozone content in atmospheric column  | 0, 14, 0     | Atmos     |
 
 The GRIB codes refer to the WMO discipline, category and parameter codes, which
