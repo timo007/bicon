@@ -17,9 +17,9 @@ function download_var(url::String, var::String; level::Number = NaN)
     Collect data from NCEP's OpenDAP server.
 
     Arguments:
-    url:		The URL of the dataset containing the data to collect.
-    var:		The name of teh variable to collect.
-    level:	The pressure level to collect (not required for 2D fields).
+    url:    The URL of the dataset containing the data to collect.
+    var:    The name of teh variable to collect.
+    level:  The pressure level to collect (not required for 2D fields).
 
     Returns:
     Writes the downloaded data to files on the local computer, and returns
@@ -97,14 +97,14 @@ function opendap_to_gmt(
 
     Arguments:
 
-    url:		The OpenDAP URL
-    var:		The variable to read (e.g. ugrdprs)
-    south: 	The southern limit of the domain to read.
-    north:	The northern limit of the domain to read.
-    west:	The western limit of the domain to read.
-    east:	The eastern limit of the domain to read.
-    level:	The vertical level to read (e.g. 925 for 925 hPa). If ommitted, read a 2D field.
-    fcst:	The forecast lead time (in units of time since the the first/base time. e.g. 24)
+    url:    The OpenDAP URL
+    var:    The variable to read (e.g. ugrdprs)
+    south:  The southern limit of the domain to read.
+    north:  The northern limit of the domain to read.
+    west:   The western limit of the domain to read.
+    east:   The eastern limit of the domain to read.
+    level:  The vertical level to read (e.g. 925 for 925 hPa). If ommitted, read a 2D field.
+    fcst:   The forecast lead time (in units of time since the the first/base time. e.g. 24)
     """
     ds = NCDataset(url, "r")
 

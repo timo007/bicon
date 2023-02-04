@@ -68,9 +68,9 @@ function contour_to_bin(
         # Create one record for each contour line. Refer to the algorithm
         # description in the article for more details.
         for segment in contour
-				# We allow the option for the user to force all contours to have
-				# the same value. This was implemented for the streamline plots; it
-				# is not the default.
+            # We allow the option for the user to force all contours to have
+            # the same value. This was implemented for the streamline plots; it
+            # is not the default.
             if isnan(zval)
                 clev = segment.data[1, 3]
             else
@@ -78,47 +78,57 @@ function contour_to_bin(
             end
             nrows = size(segment.data, 1)
 
-            # 1. Work out the maximum longitude _or_ latitude difference
+            # Work out the maximum longitude _or_ latitude difference
             # between the adjacent points on the contour line, Δ:
             Δ = maximum(abs.(segment.data[2:nrows, 1:2] - segment.data[1:nrows-1, 1:2]))
 
-            # 2. We want to select δ so that subsequent points on our encoded
+            # We want to select δ so that subsequent points on our encoded
             # contour line can be reached by offsets of no more than ±127 δ.
             # This allows the offsets to be encoded as signed 8-bit integers.
             # The worst case scenario can be shown to be:
             δ = 2 * Δ / 127
 
-            # 3. λϕ_start is the coordinates of the first point on the contour
+            # λϕ_start is the coordinates of the first point on the contour
             # line, represented as 32-bit floats. Append this to the current
             # record.
             λϕ_start = convert(Array{Float32}, segment.data[1:1, 1:2])
 
-            # 4. Start a new record for the new contour line.
+            # Start a new record for the new contour line.
             write(file, hton(convert(Float32, clev)))
             write(file, hton(convert(Int16, nrows)))
             write(file, hton(convert(Float32, δ)))
             write(file, hton.(λϕ_start))
 
-            # 5. Compute the longitudes and latitudes of the contour points
+            # Compute the longitudes and latitudes of the contour points
             # relative to first point.
             λϕ_rel = segment.data[1:nrows, 1:2] .- λϕ_start
 
-            # 6&7. Round these relative locations to be integer multiples of δ.
+            # Round these relative locations to be integer multiples of δ.
             # It is this rounding which is responsible for δ = 2 * Δ / 127
             # rather than δ = Δ / 127
             λϕ_rel = round.(λϕ_rel / δ)
 
-            # 8. Compute the offsets of each point relative to the preceding point,
+            # Compute the offsets of each point relative to the preceding point,
             # and then convert these to 8-bit signed integers.
             λϕ_offset = convert(Array{Int8}, λϕ_rel[2:nrows, 1:2] - λϕ_rel[1:nrows-1, 1:2])
 
-            # 9. Write the offsets to the current contour record
+            # Write the offsets to the current contour record
             write(file, hton.(λϕ_offset))
         end
     end
 end
 
 function bin_to_contour(infile::String)
+    """
+    Decode binary encoded contours.
+
+    Arguments:
+      infile:     The file containing the binary encoded contour.
+
+    Returns:
+      gmtds:      GMT data set with the contour locations.
+      header:     Header record with variable metadata.
+    """
     open(infile, "r") do file
         var = Vector{UInt8}(undef, 3)
         level = Vector{UInt8}(undef, 8)
@@ -168,7 +178,7 @@ function GRIBparam(discipline::Integer, category::Integer, parameter::Integer)
     Read the parameter description (name) and units from the WMO GRIB-2 parameter
     file (downloaded from WMO in CSV format).
 
-  Data are available here: http://codes.wmo.int/grib2/codeflag/4.2?_format=csv
+    Data are available here: http://codes.wmo.int/grib2/codeflag/4.2?_format=csv
 
     Arguments:
       discipline: Discipline - GRIB octet ...
@@ -176,6 +186,8 @@ function GRIBparam(discipline::Integer, category::Integer, parameter::Integer)
       parameter:  Parameter - GRIB octet ..."
 
     Returns:
+      name:       Name of the parameter.
+      unit:       Units for the parameter.
     """
     name = "Unknown"
     unit = "Unknown"
@@ -250,6 +262,9 @@ function data_region(region_name::Symbol)
 
     Arguments:
       region_name:   Symbol representing the region (:NZ etc)
+
+    Returns:
+      (west, east, south, north):   Geographical limits of the domain.
     """
     region_ds = mapproject(
         region = map_params(region_name)[:mapRegion],
