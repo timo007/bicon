@@ -116,9 +116,10 @@ function contour_to_bin(
             write(file, hton.(λϕ_offset))
         end
     end
+	 return nothing
 end
 
-function bin_to_contour(infile::String)
+function bin_to_contour(infile::String)::Tuple{Vector{GMTdataset{Float32,2}},ContourHeader}
     """
     Decode binary encoded contours.
 
@@ -173,7 +174,7 @@ function bin_to_contour(infile::String)
     end
 end
 
-function GRIBparam(discipline::Integer, category::Integer, parameter::Integer)
+function GRIBparam(discipline::Integer, category::Integer, parameter::Integer)::Tuple{String, String}
     """
     Read the parameter description (name) and units from the WMO GRIB-2 parameter
     file (downloaded from WMO in CSV format).
@@ -181,9 +182,9 @@ function GRIBparam(discipline::Integer, category::Integer, parameter::Integer)
     Data are available here: http://codes.wmo.int/grib2/codeflag/4.2?_format=csv
 
     Arguments:
-      discipline: Discipline - GRIB octet ...
-      category:   Category - GRIB octet ...
-      parameter:  Parameter - GRIB octet ..."
+      discipline: Discipline - GRIB2 octet (Table 0.0)
+      category:   Category - GRIB2 octet (Table 4.1)
+      parameter:  Parameter - GRIB2 octet (Table 4.2)
 
     Returns:
       name:       Name of the parameter.
@@ -231,6 +232,7 @@ function grid_to_contour(
     simplified_contour = gmtsimplify(contour_file, tol = tol)
     rm(contour_file)
     contour_to_bin(simplified_contour, header, cntfile, zval = NaN32)
+	 return nothing
 end
 
 function contour_to_grid(
@@ -255,7 +257,7 @@ function contour_to_grid(
     return grid
 end
 
-function data_region(region_name::Symbol)
+function data_region(region_name::Symbol)::Tuple{Float32, Float32, Float32, Float32}
     """
     Work out what rectangular region of data we need to cut out to cover
     the domain covered by the map.
@@ -264,7 +266,7 @@ function data_region(region_name::Symbol)
       region_name:   Symbol representing the region (:NZ etc)
 
     Returns:
-      (west, east, south, north):   Geographical limits of the domain.
+      west, east, south, north:   Geographical limits of the domain.
     """
     region_ds = mapproject(
         region = map_params(region_name)[:mapRegion],
