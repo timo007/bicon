@@ -328,6 +328,12 @@ function map_params(region_name::Symbol)
             :mapRegion => "80/-50/165/-3+r",
             :frame => (axes = :WSen, ticks = 2, grid = 10, annot = 10),
         ),
+        :AUSTROP => Dict(
+            :dataRegion => (60.0f0, 170.0f0, -30.0f0, -0.0f0),
+            :proj => (name = :Mercator, center = [115, 0]),
+            :mapRegion => "60/170/-30/0",
+            :frame => (axes = :WSen, ticks = 2, grid = 10, annot = 10),
+        ),
         :ANT => Dict( # Antarctica. Warning: problems at the poles are common.
             :proj => (name = :Stereographic, center = [180, -90]),
             :mapRegion => "0/360/-90/-60",
