@@ -11,11 +11,12 @@ using Printf
 
 function make_plot(
     grid::GMTgrid,
-    contour::Vector{GMTdataset{Float32,2}},
     header::ContourHeader,
     region::Symbol,
     cpt::String,
-    outfile::String,
+    cint::Number,
+    annot::Number,
+    outfile::String;
 )
     valid_time = Dates.format(
         unix2datetime(header.base_time) + Dates.Hour(header.lead_time),
@@ -61,16 +62,11 @@ function make_plot(
         figsize = 20,
     )
     coast!(area = (0, 0, 1), shore = "thinnest,magenta")
-    plot!(
-        contour,
-        pen = "thin, black",
-        decorated = (
-            quoted = true,
-            n_labels = 1,
-            label = :header,
-            font = (8, "AvantGarde-Book"),
-            n_data = 4,
-        ),
+    grdcontour!(
+        grid,
+        cont = cint,
+        annot = annot,
+        pen = (:thinnest, :black),
         savefig = outfile,
         show = true,
     )
@@ -86,6 +82,14 @@ function parse_commandline()
         "--cpt"
         help = "Colour palette"
         default = "batlow"
+        "--cint"
+        help = "Contour interval"
+        arg_type = Float32
+        default = 200.0f0
+        "--annot"
+        help = "Annotation interval"
+        arg_type = Float32
+        default = 400.0f0
         "--inc"
         help = "MSLP grid spacing"
         default = "15m/15m"
@@ -145,10 +149,11 @@ function main()
     #
     make_plot(
         grid,
-        contour,
-        header::ContourHeader,
+        header,
         reg,
         parsed_args["cpt"],
+        parsed_args["cint"],
+        parsed_args["annot"],
         parsed_args["o"],
     )
 

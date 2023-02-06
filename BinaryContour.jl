@@ -116,7 +116,7 @@ function contour_to_bin(
             write(file, hton.(λϕ_offset))
         end
     end
-	 return nothing
+    return nothing
 end
 
 function bin_to_contour(infile::String)::Tuple{Vector{GMTdataset{Float32,2}},ContourHeader}
@@ -174,7 +174,11 @@ function bin_to_contour(infile::String)::Tuple{Vector{GMTdataset{Float32,2}},Con
     end
 end
 
-function GRIBparam(discipline::Integer, category::Integer, parameter::Integer)::Tuple{String, String}
+function GRIBparam(
+    discipline::Integer,
+    category::Integer,
+    parameter::Integer,
+)::Tuple{String,String}
     """
     Read the parameter description (name) and units from the WMO GRIB-2 parameter
     file (downloaded from WMO in CSV format).
@@ -232,7 +236,7 @@ function grid_to_contour(
     simplified_contour = gmtsimplify(contour_file, tol = tol)
     rm(contour_file)
     contour_to_bin(simplified_contour, header, cntfile, zval = NaN32)
-	 return nothing
+    return nothing
 end
 
 function contour_to_grid(
@@ -257,7 +261,7 @@ function contour_to_grid(
     return grid
 end
 
-function data_region(region_name::Symbol)::Tuple{Float32, Float32, Float32, Float32}
+function data_region(region_name::Symbol)::Tuple{Float32,Float32,Float32,Float32}
     """
     Work out what rectangular region of data we need to cut out to cover
     the domain covered by the map.
