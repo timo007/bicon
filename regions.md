@@ -15,6 +15,8 @@ currently defined regions are listed in the table below.
 |AUS			| Lambert conic conformal	| BL corner: 80°E, 50°S					|
 |				| Centre: 130°E, 30°S		| TR corner: 165°E, 3°S					|
 |				| Parallels: 40°S, 20°S		|												|
+|AUSTROP		| Mercator						| 60°E-170°W, 30°S-Equator				|
+|				| Centre: 115°W, 0°N			|												|
 |ANT			| Polar stereographic		| 0°E-360°E, 90°S-60°S					|
 |				| Centre: 180°E, 90°S		|												|
 |UK			| Equidistant conic			| BL corner: 30°W, 40°N					|
