@@ -1,3 +1,9 @@
+# This is like plot.jl, but instead of directly plotting the simplified contours,
+# contours are plotted based on the gridded data (which have been generated from
+# the simplified contours). This produces smoother looking contours which are more
+# pleasing to the eye, but it hides the fact that the raw data are in fact the
+# simplified contours.
+
 include("BinaryContour.jl")
 
 using ArgParse

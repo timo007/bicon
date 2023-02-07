@@ -1,3 +1,8 @@
+# Download (optionally) and plot a BinCon encoded data file.
+#
+# 1. Plot the simplified contours directly on a map
+# 2. Convert the simplified contours to a regular grid.
+# 3. Show the gridded data as a coloured image in the background.
 include("BinaryContour.jl")
 
 using ArgParse
