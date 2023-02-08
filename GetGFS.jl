@@ -30,7 +30,7 @@ function download_var(url::String, var::String; level::Number = NaN)
     lon = ds["lon"][:]
     lat = ds["lat"][:]
     basetime = ds["time"][1]
-    valtime = ds["time"][9:8:41]
+    valtime = ds["time"][9:4:41]
 
     if (!isnan(level))
         # Extract a slice of 3D data (e.g. a level from pressure level data)
