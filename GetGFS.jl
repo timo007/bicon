@@ -36,10 +36,10 @@ function download_var(url::String, var::String; level::Number = NaN)
         # Extract a slice of 3D data (e.g. a level from pressure level data)
         lev = ds["lev"][:]
         lev_idx = findall(x -> x ≈ level, lev)[1]
-        data = ds[var][:, :, lev_idx, 9:8:41]
+        data = ds[var][:, :, lev_idx, 9:4:41]
     else
         # 2D data (e.g. surface fields)
-        data = ds[var][:, :, 9:8:41]
+        data = ds[var][:, :, 9:4:41]
     end
 
     close(ds)
