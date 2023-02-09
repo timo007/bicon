@@ -292,12 +292,13 @@ function map_params(region_name::Symbol)
 
     Argument:
          region_name    A symbol representing the region.
-                        :NZ    = New Zealand
-                        :SWP   = South West Pacific
-                        :TON   = Tonga
-                        :AUS   = Australia
-                        :UK    = United Kingdom
-                        :WORLD = World
+                        :NZ      = New Zealand
+                        :SWP     = South West Pacific
+                        :TON     = Tonga
+                        :AUS     = Australia
+                        :AUSTROP = Australia tropics
+                        :UK      = United Kingdom
+                        :WORLD   = World
 
     Return:
          Returns a dictionary with the various map related parameters for the
@@ -325,7 +326,7 @@ function map_params(region_name::Symbol)
         :AUS => Dict(
             :proj =>
                 (name = :lambertConic, center = [130, -30], parallels = [-20, -40]),
-            :mapRegion => "80/-50/165/-3+r",
+            :mapRegion => "85/-45/163/2+r",
             :frame => (axes = :WSen, ticks = 2, grid = 10, annot = 10),
         ),
         :AUSTROP => Dict(
