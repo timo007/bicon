@@ -28,6 +28,7 @@ struct ContourHeader
     north::Float32         # Northern edge of the domain (°N).
 end
 
+
 function contour_to_bin(
     contour::Vector{GMTdataset{Float64,2}},
     header::ContourHeader,
@@ -51,72 +52,37 @@ function contour_to_bin(
     # Write the contours in binary, network endianess.
     #
     open(outfile, "w") do file
-        #
-        # Write metadata to the first record.
-        #
-        write(file, hton(header.discipline))    # WMO GRIB2 table 0.0
-        write(file, hton(header.category))      # WMO GRIB2 table 4.1
-        write(file, hton(header.parameter))     # WMO GRIB2 table 4.2
-        write(file, hton(header.base_time))     # NWP forecast base time
-        write(file, hton(header.lead_time))     # NWP forecast lead time
-        write(file, header.level)               # Vertical level
-        write(file, hton(header.west))          # Western edge of domain
-        write(file, hton(header.east))          # Eastern edge of domain
-        write(file, hton(header.south))         # Southern edge of domain
-        write(file, hton(header.north))         # Northern edge of domain
+        # Write the header record.
+        write(
+            file,
+            hton(header.discipline),
+            hton(header.category),
+            hton(header.parameter),
+            hton(header.base_time),
+            hton(header.lead_time),
+            header.level,
+            hton(header.west),
+            hton(header.east),
+            hton(header.south),
+            hton(header.north),
+        )
 
-        # Create one record for each contour line. Refer to the algorithm
-        # description in the article for more details.
+        # Create one record for each contour line.
         for segment in contour
-            # We allow the option for the user to force all contours to have
-            # the same value. This was implemented for the streamline plots; it
-            # is not the default.
-            if isnan(zval)
-                clev = segment.data[1, 3]
-            else
-                clev = zval
-            end
-            nrows = size(segment.data, 1)
-
-            # Work out the maximum longitude _or_ latitude difference
-            # between the adjacent points on the contour line, Δ:
+            clev = convert(Float32, isnan(zval) ? segment.data[1, 3] : zval)
+            nrows = convert(Int16, size(segment.data, 1))
             Δ = maximum(abs.(segment.data[2:nrows, 1:2] - segment.data[1:nrows-1, 1:2]))
-
-            # We want to select δ so that subsequent points on our encoded
-            # contour line can be reached by offsets of no more than ±127 δ.
-            # This allows the offsets to be encoded as signed 8-bit integers.
-            # The worst case scenario can be shown to be:
-            δ = 2 * Δ / 127
-
-            # λϕ_start is the coordinates of the first point on the contour
-            # line, represented as 32-bit floats. Append this to the current
-            # record.
+            δ = convert(Float32, 2 * Δ / 127)
             λϕ_start = convert(Array{Float32}, segment.data[1:1, 1:2])
 
-            # Start a new record for the new contour line.
-            write(file, hton(convert(Float32, clev)))
-            write(file, hton(convert(Int16, nrows)))
-            write(file, hton(convert(Float32, δ)))
-            write(file, hton.(λϕ_start))
+            write(file, hton(clev), hton(nrows), hton(δ), hton.(λϕ_start))
 
-            # Compute the longitudes and latitudes of the contour points
-            # relative to first point.
-            λϕ_rel = segment.data[1:nrows, 1:2] .- λϕ_start
-
-            # Round these relative locations to be integer multiples of δ.
-            # It is this rounding which is responsible for δ = 2 * Δ / 127
-            # rather than δ = Δ / 127
-            λϕ_rel = round.(λϕ_rel / δ)
-
-            # Compute the offsets of each point relative to the preceding point,
-            # and then convert these to 8-bit signed integers.
+            λϕ_rel = round.((segment.data[1:nrows, 1:2] .- λϕ_start) / δ)
             λϕ_offset = convert(Array{Int8}, λϕ_rel[2:nrows, 1:2] - λϕ_rel[1:nrows-1, 1:2])
 
-            # Write the offsets to the current contour record
             write(file, hton.(λϕ_offset))
         end
     end
-    return nothing
 end
 
 function bin_to_contour(infile::String)::Tuple{Vector{GMTdataset{Float32,2}},ContourHeader}
