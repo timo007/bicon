@@ -295,6 +295,12 @@ function map_params(region_name::Symbol)
             :mapRegion => "85/-45/163/2+r",
             :frame => (axes = :WSen, ticks = 2, grid = 10, annot = 10),
         ),
+        :AUSNW => Dict(
+            :dataRegion => (100.0f0, 135.0f0, -25.0f0, -5.0f0),
+            :proj => (name = :Mercator, center = [125, 0]),
+            :mapRegion => "100/135/-25/-5",
+            :frame => (axes = :WSen, ticks = 2, grid = 10, annot = 10),
+        ),
         :AUSTROP => Dict(
             :dataRegion => (80.0f0, 170.0f0, -35.0f0, -0.0f0),
             :proj => (name = :Mercator, center = [125, 0]),
